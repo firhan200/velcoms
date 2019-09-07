@@ -2901,7 +2901,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle'); //hide loading
 
 
-        _this.setLoading(false);
+        _this.is_loading = false;
       });
     }
   },
@@ -3563,6 +3563,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //libs
 
  //components
@@ -3576,16 +3589,26 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      //DOM & Collections
+      article_categories: [],
       //form data
       title: '',
       slug: '',
+      body: '',
+      article_category_id: null,
       //loader
       is_loading: false,
+      is_category_loading: false,
       //error
       is_error: false,
       error_message: '',
       error_icon: ''
     };
+  },
+  mounted: function mounted() {
+    //get article categories
+    this.getArticleCategories();
+    CKEDITOR.replace(document.getElementsByClassName('ckeditor')[0]);
   },
   methods: {
     backToList: function backToList() {
@@ -3621,33 +3644,22 @@ __webpack_require__.r(__webpack_exports__);
         this.error_icon = '';
       }
     },
-    //submit form
-    submit: function submit() {
+    getArticleCategories: function getArticleCategories() {
       var _this = this;
 
-      //hide error
-      this.showError(false); //show loading
+      //loading
+      this.is_category_loading = true; //call API
 
-      this.setLoading(true); //post body
-
-      var body = {
-        title: this.title,
-        slug: this.slug
-      }; //call API
-
-      axios.post('/api/admin/articles', body, _helpers_userHelper__WEBPACK_IMPORTED_MODULE_0__["default"].authenticationBearer()).then(function (res) {
+      axios.get('/api/admin/article_categories', _helpers_userHelper__WEBPACK_IMPORTED_MODULE_0__["default"].authenticationBearer()).then(function (res) {
         if (res.status === 200) {
           //check if success
-          if (res.data.is_success) {
-            //success add
-            _this.$toast.open({
-              message: 'Successfully add new data.',
-              type: 'success',
-              position: _config__WEBPACK_IMPORTED_MODULE_1__["default"].toast_position
-            }); //back to list and then refresh list
+          if (res.data.status !== 'undefined') {
+            //success
+            _this.article_categories = res.data.results; //select first
 
-
-            _this.$emit('backToList', true);
+            if (res.data.results.length > 0) {
+              _this.article_category_id = res.data.results[0].id;
+            }
           } else {
             //failed to add
             var message = typeof res.data.status !== 'undefined' ? res.data.status : res.data.message;
@@ -3660,13 +3672,63 @@ __webpack_require__.r(__webpack_exports__);
         } //hide loading
 
 
-        _this.setLoading(false);
+        _this.is_category_loading = false;
       })["catch"](function (err) {
         //error
         _this.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle'); //hide loading
 
 
-        _this.setLoading(false);
+        _this.is_category_loading = false;
+      });
+    },
+    //submit form
+    submit: function submit() {
+      var _this2 = this;
+
+      //hide error
+      this.showError(false); //show loading
+
+      this.setLoading(true); //post body
+
+      var body = {
+        title: this.title,
+        slug: this.slug,
+        article_category_id: this.article_category_id,
+        body: CKEDITOR.instances.body.getData()
+      }; //call API
+
+      axios.post('/api/admin/articles', body, _helpers_userHelper__WEBPACK_IMPORTED_MODULE_0__["default"].authenticationBearer()).then(function (res) {
+        if (res.status === 200) {
+          //check if success
+          if (res.data.is_success) {
+            //success add
+            _this2.$toast.open({
+              message: 'Successfully add new data.',
+              type: 'success',
+              position: _config__WEBPACK_IMPORTED_MODULE_1__["default"].toast_position
+            }); //back to list and then refresh list
+
+
+            _this2.$emit('backToList', true);
+          } else {
+            //failed to add
+            var message = typeof res.data.status !== 'undefined' ? res.data.status : res.data.message;
+
+            _this2.showError(true, message, 'fa fa-info-circle');
+          }
+        } else {
+          //error response
+          _this2.showError(true, 'error code: ' + res.status + ' ' + res.statusText, 'fa fa-info-circle');
+        } //hide loading
+
+
+        _this2.setLoading(false);
+      })["catch"](function (err) {
+        //error
+        _this2.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle'); //hide loading
+
+
+        _this2.setLoading(false);
       });
     }
   }
@@ -3743,6 +3805,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //libs
 
  //components
@@ -3760,8 +3839,11 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       // detail
-      name: '',
       title: '',
+      slug: '',
+      body: '',
+      article_category_id: '',
+      article_category_name: '',
       is_active: '',
       created_at: '',
       updated_at: '',
@@ -3792,6 +3874,9 @@ __webpack_require__.r(__webpack_exports__);
     populateDetail: function populateDetail(detailObj) {
       this.title = detailObj.title;
       this.slug = detailObj.slug;
+      this.body = detailObj.body;
+      this.article_category_id = detailObj.article_category_id;
+      this.article_category_name = detailObj.article_category_name;
       this.is_active = detailObj.is_active === 1 ? true : false;
       this.created_at = detailObj.created_at;
       this.updated_at = detailObj.updated_at;
@@ -3830,7 +3915,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle'); //hide loading
 
 
-        _this.setLoading(false);
+        _this.is_loading = false;
       });
     }
   },
@@ -3850,10 +3935,31 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _helpers_userHelper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../../../helpers/userHelper */ "./resources/js/helpers/userHelper.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../../../config */ "./resources/js/config.js");
-/* harmony import */ var _Loading_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../../Loading.vue */ "./resources/js/components/Loading.vue");
-/* harmony import */ var _styles_ErrorMessage_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../../styles/ErrorMessage.vue */ "./resources/js/components/styles/ErrorMessage.vue");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _helpers_userHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../../../helpers/userHelper */ "./resources/js/helpers/userHelper.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../../../config */ "./resources/js/config.js");
+/* harmony import */ var _Loading_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../../Loading.vue */ "./resources/js/components/Loading.vue");
+/* harmony import */ var _styles_ErrorMessage_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./../../styles/ErrorMessage.vue */ "./resources/js/components/styles/ErrorMessage.vue");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3893,18 +3999,23 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    Loading: _Loading_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
-    ErrorMessage: _styles_ErrorMessage_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
+    Loading: _Loading_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+    ErrorMessage: _styles_ErrorMessage_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
   props: ['id'],
   data: function data() {
     return {
+      //DOM & Collections
+      article_categories: [],
       //form data
       title: '',
       slug: '',
+      body: '',
+      article_category_id: null,
       is_active: '',
       //loader
       is_loading: false,
+      is_category_loading: false,
       //error
       is_error: false,
       error_message: '',
@@ -3912,7 +4023,17 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
-    this.getDetail(this.id);
+    var _this = this;
+
+    this.getArticleCategories().then(function () {
+      //get article categories
+      _this.getDetail(_this.id).then(function () {
+        //init CKEditor
+        CKEDITOR.replace(document.getElementsByClassName('ckeditor')[0]); //set body
+
+        CKEDITOR.instances.body.setData(_this.body);
+      });
+    });
   },
   methods: {
     onActiveChange: function onActiveChange(e) {
@@ -3951,51 +4072,130 @@ __webpack_require__.r(__webpack_exports__);
         this.error_icon = '';
       }
     },
+    getArticleCategories: function () {
+      var _getArticleCategories = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var _this2 = this;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                //loading
+                this.is_category_loading = true; //call API
+
+                _context.next = 3;
+                return axios.get('/api/admin/article_categories', _helpers_userHelper__WEBPACK_IMPORTED_MODULE_1__["default"].authenticationBearer()).then(function (res) {
+                  if (res.status === 200) {
+                    //check if success
+                    if (res.data.status !== 'undefined') {
+                      //success
+                      _this2.article_categories = res.data.results;
+                    } else {
+                      //failed to add
+                      var message = typeof res.data.status !== 'undefined' ? res.data.status : res.data.message;
+
+                      _this2.showError(true, message, 'fa fa-info-circle');
+                    }
+                  } else {
+                    //error response
+                    _this2.showError(true, 'error code: ' + res.status + ' ' + res.statusText, 'fa fa-info-circle');
+                  } //hide loading
+
+
+                  _this2.is_category_loading = false;
+                })["catch"](function (err) {
+                  //error
+                  _this2.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle'); //hide loading
+
+
+                  _this2.is_category_loading = false;
+                });
+
+              case 3:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function getArticleCategories() {
+        return _getArticleCategories.apply(this, arguments);
+      }
+
+      return getArticleCategories;
+    }(),
     populateDetail: function populateDetail(detailObj) {
       this.title = detailObj.title;
       this.slug = detailObj.slug;
+      this.article_category_id = detailObj.article_category_id;
+      this.body = detailObj.body;
       this.is_active = detailObj.is_active === 1 ? true : false;
     },
-    getDetail: function getDetail(id) {
-      var _this = this;
+    getDetail: function () {
+      var _getDetail = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(id) {
+        var _this3 = this;
 
-      //hide error
-      this.showError(false); //show loading
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                //hide error
+                this.showError(false); //show loading
 
-      this.is_loading = true; //call API
+                this.is_loading = true; //call API
 
-      axios.get('/api/admin/articles/' + id, {
-        headers: _helpers_userHelper__WEBPACK_IMPORTED_MODULE_0__["default"].authenticationBearer().headers
-      }).then(function (res) {
-        if (res.status === 200) {
-          //check if success
-          if (res.data.is_success) {
-            //success 
-            _this.populateDetail(res.data.data);
-          } else {
-            //failed to add
-            var message = typeof res.data.status !== 'undefined' ? res.data.status : res.data.message;
+                _context2.next = 4;
+                return axios.get('/api/admin/articles/' + id, {
+                  headers: _helpers_userHelper__WEBPACK_IMPORTED_MODULE_1__["default"].authenticationBearer().headers
+                }).then(function (res) {
+                  if (res.status === 200) {
+                    //check if success
+                    if (res.data.is_success) {
+                      //success 
+                      _this3.populateDetail(res.data.data);
+                    } else {
+                      //failed to add
+                      var message = typeof res.data.status !== 'undefined' ? res.data.status : res.data.message;
 
-            _this.showError(true, message, 'fa fa-info-circle');
+                      _this3.showError(true, message, 'fa fa-info-circle');
+                    }
+                  } else {
+                    //error response
+                    _this3.showError(true, 'error code: ' + res.status + ' ' + res.statusText, 'fa fa-info-circle');
+                  } //hide loading
+
+
+                  _this3.is_loading = false;
+                })["catch"](function (err) {
+                  //error
+                  _this3.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle'); //hide loading
+
+
+                  _this3.is_loading = false;
+                });
+
+              case 4:
+              case "end":
+                return _context2.stop();
+            }
           }
-        } else {
-          //error response
-          _this.showError(true, 'error code: ' + res.status + ' ' + res.statusText, 'fa fa-info-circle');
-        } //hide loading
+        }, _callee2, this);
+      }));
 
+      function getDetail(_x) {
+        return _getDetail.apply(this, arguments);
+      }
 
-        _this.is_loading = false;
-      })["catch"](function (err) {
-        //error
-        _this.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle'); //hide loading
-
-
-        _this.setLoading(false);
-      });
-    },
+      return getDetail;
+    }(),
     //submit form
     submit: function submit() {
-      var _this2 = this;
+      var _this4 = this;
 
       //hide error
       this.showError(false); //show loading
@@ -4005,41 +4205,43 @@ __webpack_require__.r(__webpack_exports__);
       var body = {
         title: this.title,
         slug: this.slug,
+        article_category_id: this.article_category_id,
+        body: CKEDITOR.instances.body.getData(),
         is_active: this.is_active
       }; //call API
 
-      axios.put('/api/admin/articles/' + this.id, body, _helpers_userHelper__WEBPACK_IMPORTED_MODULE_0__["default"].authenticationBearer()).then(function (res) {
+      axios.put('/api/admin/articles/' + this.id, body, _helpers_userHelper__WEBPACK_IMPORTED_MODULE_1__["default"].authenticationBearer()).then(function (res) {
         if (res.status === 200) {
           //check if success
           if (res.data.is_success) {
             //success add
-            _this2.$toast.open({
+            _this4.$toast.open({
               message: 'Successfully update data.',
               type: 'success',
-              position: _config__WEBPACK_IMPORTED_MODULE_1__["default"].toast_position
+              position: _config__WEBPACK_IMPORTED_MODULE_2__["default"].toast_position
             }); //back to list and then refresh list
 
 
-            _this2.$emit('backToList', true);
+            _this4.$emit('backToList', true);
           } else {
             //failed to add
             var message = typeof res.data.status !== 'undefined' ? res.data.status : res.data.message;
 
-            _this2.showError(true, message, 'fa fa-info-circle');
+            _this4.showError(true, message, 'fa fa-info-circle');
           }
         } else {
           //error response
-          _this2.showError(true, 'error code: ' + res.status + ' ' + res.statusText, 'fa fa-info-circle');
+          _this4.showError(true, 'error code: ' + res.status + ' ' + res.statusText, 'fa fa-info-circle');
         } //hide loading
 
 
-        _this2.setLoading(false);
+        _this4.setLoading(false);
       })["catch"](function (err) {
         //error
-        _this2.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle'); //hide loading
+        _this4.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle'); //hide loading
 
 
-        _this2.setLoading(false);
+        _this4.setLoading(false);
       });
     }
   }
@@ -40327,6 +40529,97 @@ var render = function() {
             })
           ]),
           _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "form-group" },
+            [
+              _c("label", [_vm._v("Category")]),
+              _vm._v(" "),
+              !_vm.is_category_loading
+                ? _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.article_category_id,
+                          expression: "article_category_id"
+                        }
+                      ],
+                      staticClass: "form-group",
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.article_category_id = $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        }
+                      }
+                    },
+                    _vm._l(this.article_categories, function(article_category) {
+                      return _c(
+                        "option",
+                        {
+                          key: article_category.id,
+                          domProps: { value: article_category.id }
+                        },
+                        [
+                          _vm._v(
+                            "\n                    " +
+                              _vm._s(article_category.name) +
+                              "\n                "
+                          )
+                        ]
+                      )
+                    }),
+                    0
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.is_category_loading ? _c("Loading") : _vm._e()
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "form-group" }, [
+            _c("label", [_vm._v("Body")]),
+            _vm._v(" "),
+            _c("textarea", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.body,
+                  expression: "body"
+                }
+              ],
+              staticClass: "ckeditor form-control",
+              attrs: {
+                id: "body",
+                placeholder: "Body",
+                maxlength: "2000",
+                required: ""
+              },
+              domProps: { value: _vm.body },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.body = $event.target.value
+                }
+              }
+            })
+          ]),
+          _vm._v(" "),
           _c("div", { attrs: { align: "left" } }, [
             _c(
               "button",
@@ -40429,6 +40722,33 @@ var render = function() {
               _c("div", { staticClass: "col-sm-10 body" }, [
                 _vm._v(
                   "\n                " + _vm._s(this.slug) + "\n            "
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row detail" }, [
+              _c("div", { staticClass: "col-sm-2 label" }, [
+                _vm._v("\n                Body\n            ")
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-sm-10 body" }, [
+                _c("div", {
+                  staticClass: "html-content",
+                  domProps: { innerHTML: _vm._s(this.body) }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row detail" }, [
+              _c("div", { staticClass: "col-sm-2 label" }, [
+                _vm._v("\n                Category\n            ")
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-sm-10 body" }, [
+                _vm._v(
+                  "\n                " +
+                    _vm._s(this.article_category_name) +
+                    "\n            "
                 )
               ])
             ]),
@@ -40608,6 +40928,99 @@ var render = function() {
                           return
                         }
                         _vm.slug = $event.target.value
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "form-group" },
+                  [
+                    _c("label", [_vm._v("Category")]),
+                    _vm._v(" "),
+                    !_vm.is_category_loading
+                      ? _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.article_category_id,
+                                expression: "article_category_id"
+                              }
+                            ],
+                            staticClass: "form-group",
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.article_category_id = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          _vm._l(this.article_categories, function(
+                            article_category
+                          ) {
+                            return _c(
+                              "option",
+                              {
+                                key: article_category.id,
+                                domProps: { value: article_category.id }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                        " +
+                                    _vm._s(article_category.name) +
+                                    "\n                    "
+                                )
+                              ]
+                            )
+                          }),
+                          0
+                        )
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.is_category_loading ? _c("Loading") : _vm._e()
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", [_vm._v("Body")]),
+                  _vm._v(" "),
+                  _c("textarea", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.body,
+                        expression: "body"
+                      }
+                    ],
+                    staticClass: "ckeditor form-control",
+                    attrs: {
+                      id: "body",
+                      placeholder: "Body",
+                      maxlength: "2000",
+                      required: ""
+                    },
+                    domProps: { value: _vm.body },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.body = $event.target.value
                       }
                     }
                   })
@@ -40849,13 +41262,13 @@ var render = function() {
                             staticClass: "link",
                             on: {
                               click: function($event) {
-                                return _vm.sortBy("name")
+                                return _vm.sortBy("title")
                               }
                             }
                           },
                           [
                             _vm._v(
-                              "\n                                Name\n                                "
+                              "\n                                Title\n                                "
                             ),
                             _c("SortArrow", { attrs: { desc: this.desc } })
                           ],
@@ -40938,7 +41351,7 @@ var render = function() {
                                   [
                                     _vm._v(
                                       "\n                            " +
-                                        _vm._s(data.name) +
+                                        _vm._s(data.title) +
                                         "\n                        "
                                     )
                                   ]

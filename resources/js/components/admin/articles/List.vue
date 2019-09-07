@@ -47,8 +47,8 @@
                     <div class="header d-none d-md-block">
                         <div class="row">
                             <div class="no-pad col-sm-2">                            
-                                <span class="link" v-on:click="sortBy('name')">
-                                    Name
+                                <span class="link" v-on:click="sortBy('title')">
+                                    Title
                                     <SortArrow :desc="this.desc"/>
                                 </span>
                             </div>
@@ -75,7 +75,7 @@
                     <div class="body" v-if="!this.is_loading">
                         <div v-bind:key="data.id" v-for="data in this.datas" class="row">
                             <div class="no-pad col-sm-2 m-center">
-                                {{ data.name }}
+                                {{ data.title }}
                             </div>
                             <div class="no-pad col-sm-6 m-center">
                                 {{ data.slug }}

@@ -14,7 +14,20 @@
                 <div class="form-group">
                     <label>Slug</label>
                     <textarea v-model="slug" class="form-control" placeholder="Slug" maxlength="500" required></textarea>
-                </div>          
+                </div>   
+                <div class="form-group">
+                    <label>Category</label>
+                    <select v-if="!is_category_loading" class="form-group" v-model="article_category_id">
+                        <option :value="article_category.id" v-bind:key="article_category.id" v-for="article_category in this.article_categories">
+                            {{ article_category.name }}
+                        </option>
+                    </select>
+                    <Loading v-if="is_category_loading"/>
+                </div>
+                <div class="form-group">
+                    <label>Body</label>
+                    <textarea id="body" v-model="body" class="ckeditor form-control" placeholder="Body" maxlength="2000" required></textarea>
+                </div>       
                 <div class="form-group">
                     <label>Is Active</label>
                     &nbsp;
@@ -48,13 +61,19 @@ export default {
     ],
     data(){
         return{
+            //DOM & Collections
+            article_categories : [],
+
             //form data
             title: '',
             slug: '',
+            body: '',
+            article_category_id : null,
             is_active : '',
 
             //loader
             is_loading: false,
+            is_category_loading: false,
 
             //error
             is_error: false,
@@ -63,7 +82,17 @@ export default {
         }
     },
     mounted(){
-        this.getDetail(this.id);
+        this.getArticleCategories()
+        .then(() => {
+            //get article categories
+            this.getDetail(this.id).
+            then(() => {
+                //init CKEditor
+                CKEDITOR.replace(document.getElementsByClassName('ckeditor')[0]);
+                //set body
+                CKEDITOR.instances.body.setData(this.body);
+            });
+        });
     },
     methods : {
         onActiveChange(e){
@@ -99,19 +128,55 @@ export default {
                 this.error_icon = '';
             }
         },
+        async getArticleCategories(){
+            //loading
+            this.is_category_loading = true;
+
+            //call API
+            await axios.get('/api/admin/article_categories', userHelper.authenticationBearer())
+            .then(res => {
+                if(res.status===200){
+                    //check if success
+                    if(res.data.status !== 'undefined'){
+                        //success
+                        this.article_categories = res.data.results;
+                    }else{
+                        //failed to add
+                        let message = (typeof res.data.status !=='undefined' ? res.data.status : res.data.message);
+                        this.showError(true, message, 'fa fa-info-circle');
+                    }
+                }
+                else{
+                    //error response
+                    this.showError(true, 'error code: '+res.status+' '+res.statusText, 'fa fa-info-circle');
+                }
+
+                //hide loading
+                this.is_category_loading = false;
+            })
+            .catch(err => {
+                //error
+                this.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle');
+
+                //hide loading
+                this.is_category_loading = false;
+            })
+        },
         populateDetail(detailObj){
             this.title = detailObj.title;
             this.slug = detailObj.slug;
+            this.article_category_id = detailObj.article_category_id;
+            this.body = detailObj.body;
             this.is_active = detailObj.is_active===1 ? true : false;
         },
-        getDetail(id){
+        async getDetail(id){
             //hide error
             this.showError(false);
             //show loading
             this.is_loading = true;
 
             //call API
-            axios.get('/api/admin/articles/'+id,{
+            await axios.get('/api/admin/articles/'+id,{
                 headers: userHelper.authenticationBearer().headers
             })
             .then(res => {
@@ -139,7 +204,7 @@ export default {
                 this.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle');
 
                 //hide loading
-                this.setLoading(false);
+                this.is_loading = false;
             })
         },
         //submit form
@@ -154,6 +219,8 @@ export default {
             let body = {
                 title : this.title,
                 slug : this.slug,
+                article_category_id : this.article_category_id,
+                body : CKEDITOR.instances.body.getData(),
                 is_active : this.is_active,
             }
 

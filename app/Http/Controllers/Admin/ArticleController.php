@@ -107,6 +107,8 @@ class ArticleController extends Controller
             //fill data
             $model->title = $request->input('title');
             $model->slug = $request->input('slug');
+            $model->body = $request->input('body');
+            $model->article_category_id = $request->input('article_category_id');
             $model->is_active = 1; //default is active
             $model->is_deleted = 0; //default
 
@@ -132,7 +134,10 @@ class ArticleController extends Controller
             //init model
             $model = $this->model;
 
-            $modelObj = $model::where('id', $id)->first();
+            $modelObj = $model::where('articles.id', $id)->
+                leftJoin('article_categories', 'articles.article_category_id', 'article_categories.id')->
+                select('articles.*', 'article_categories.id AS article_category_id', 'article_categories.name AS article_category_name')->
+                first();
             if($modelObj!=null){
                 if(!$modelObj->is_deleted){
                     $response['is_success'] = true;
@@ -166,6 +171,8 @@ class ArticleController extends Controller
                 //update
                 $modelObj->title = $request->title;
                 $modelObj->slug = $request->slug;
+                $modelObj->body = $request->body;
+                $modelObj->article_category_id = $request->article_category_id;
                 $modelObj->is_active = $request->is_active;
 
                 //save

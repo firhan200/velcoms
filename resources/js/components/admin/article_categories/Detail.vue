@@ -148,7 +148,7 @@ export default {
                 this.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle');
 
                 //hide loading
-                this.setLoading(false);
+                this.is_loading = false;
             })
         }
     },

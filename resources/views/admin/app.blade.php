@@ -28,6 +28,7 @@
         <!-- Bootstrap Js -->
         <script src="{{ asset('js/jquery.min.js') }}"></script>
         <script src="{{ asset('libs/bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('libs/ckeditor/ckeditor.js') }}"></script>
         <script src="{{ asset('js/app.js') }}"></script>
 
         <script>

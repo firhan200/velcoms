@@ -24,6 +24,23 @@
             </div> 
             <div class="row detail">
                 <div class="col-sm-2 label">
+                    Body
+                </div>
+                <div class="col-sm-10 body">
+                    <div class="html-content" v-html="this.body">
+                    </div>
+                </div>
+            </div>
+            <div class="row detail">
+                <div class="col-sm-2 label">
+                    Category
+                </div>
+                <div class="col-sm-10 body">
+                    {{ this.article_category_name }}
+                </div>
+            </div> 
+            <div class="row detail">
+                <div class="col-sm-2 label">
                     Is Active
                 </div>
                 <div class="col-sm-10 body">
@@ -75,8 +92,11 @@ export default {
     data(){
         return {
             // detail
-            name : '',
             title : '',
+            slug : '',
+            body : '',
+            article_category_id : '',
+            article_category_name : '',
             is_active : '',
             created_at : '',
             updated_at : '',
@@ -109,6 +129,9 @@ export default {
         populateDetail(detailObj){
             this.title = detailObj.title;
             this.slug = detailObj.slug;
+            this.body = detailObj.body;
+            this.article_category_id = detailObj.article_category_id;
+            this.article_category_name = detailObj.article_category_name;
             this.is_active = detailObj.is_active===1 ? true : false;
             this.created_at = detailObj.created_at;
             this.updated_at = detailObj.updated_at;
@@ -148,7 +171,7 @@ export default {
                 this.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle');
 
                 //hide loading
-                this.setLoading(false);
+                this.is_loading = false;
             })
         }
     },
