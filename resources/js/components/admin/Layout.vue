@@ -107,10 +107,10 @@
                         <i class="fa fa-envelope"></i>
                         <span class="badge badge-pill badge-success notification">7</span>
                     </a>
-                    <a>
+                    <router-link to="/cms/update-profile">
                         <i class="fa fa-cog"></i>
                         <span class="badge-sonar"></span>
-                    </a>
+                    </router-link>
                     <a data-toggle="modal" data-target="#logoutModal">
                         <i class="fa fa-power-off"></i>
                     </a>

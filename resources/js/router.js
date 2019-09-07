@@ -12,7 +12,12 @@ import ResetPassword from './components/ResetPassword';
 //Admin
 import AdminLayout from './components/admin/Layout';
 import AdminDashboard from './components/admin/Dashboard';
+import AdminUpdateProfile from './components/admin/profiles/Update';
+import AdminChangePassword from './components/admin/profiles/ChangePassword';
+
+/* CRUD */
 import AdminArticleCategories from './components/admin/article_categories/List';
+import AdminArticles from './components/admin/articles/List';
 
 //use router
 Vue.use(VueRouter);
@@ -41,9 +46,23 @@ const router = new VueRouter({
                     component : AdminDashboard
                 },
                 {
+                    path: 'update-profile',
+                    component : AdminUpdateProfile
+                },
+                {
+                    path: 'update-password',
+                    component : AdminChangePassword
+                },
+
+                /* CRUD */
+                {
                     path: 'article_categories',
                     component : AdminArticleCategories
-                }
+                },
+                {
+                    path: 'articles',
+                    component : AdminArticles
+                },
             ]
         }
     ]

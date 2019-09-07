@@ -11,6 +11,7 @@ use Config;
 use URL;
 use Mail;
 use Carbon\Carbon;
+use Hash;
 
 class AuthController extends Controller
 {
@@ -29,6 +30,83 @@ class AuthController extends Controller
                 'model' => \App\Models\Administrator::class,
             ]]);
     }
+
+    public function updateProfile(Request $request){
+        $response = ['data' => null, 'is_success' => false, 'message' => '', 'errors' => []];
+        
+        try{
+            //get user
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if($user!=null){
+                if(!$user->is_deleted){
+                    //validating email
+                    $email_exist = $this->model::where('id', '!=', $user->id)->where('email', $request->input('email'))->first();
+                    if($email_exist==null){
+                        //fill data
+                        $user->name = $request->input('name');
+                        $user->email = $request->input('email');
+                    
+                        //save to db
+                        $user->save();
+
+                        $response['is_success'] = true;
+                        $response['data'] = $user;
+                    }else{
+                        //email already taken
+                        $response['message'] = 'email already taken.';
+                    }
+                }else{
+                    $response['message'] = 'data not found';
+                }
+            }else{
+                $response['message'] = 'data not found';
+            }
+        }catch(\Exception $ex){
+            $response['status'] = $ex->getMessage();
+        }
+        
+        //return json
+        return response()->json($response);
+    } 
+
+    public function updatePassword(Request $request){
+        $response = ['data' => null, 'is_success' => false, 'message' => '', 'errors' => []];
+        
+        try{
+            //get user
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if($user!=null){
+                if(!$user->is_deleted){
+                    //validating old password
+                    $old_password_correct = $user->password==bcrypt($request->input('old_password'));
+                    if(Hash::check($request->input('old_password'), $user->password)){
+                        //fill data
+                        $user->password = bcrypt($request->input('new_password'));
+                    
+                        //save to db
+                        $user->save();
+
+                        $response['is_success'] = true;
+                        $response['data'] = $user;
+                    }else{
+                        //incorrect old password
+                        $response['message'] = 'incorrect old password.';
+                    }
+                }else{
+                    $response['message'] = 'data not found';
+                }
+            }else{
+                $response['message'] = 'data not found';
+            }
+        }catch(\Exception $ex){
+            $response['status'] = $ex->getMessage();
+        }
+        
+        //return json
+        return response()->json($response);
+    } 
 
     /* ============================================================================== */
     /* ================     Authorization   ==================== */

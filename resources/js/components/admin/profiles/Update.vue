@@ -1,29 +1,28 @@
 <template>
     <div class="box">
         <div class="page-title">
-            Edit
+            <div class="row">
+                <div class="col-8">
+                    Update Profile
+                </div>
+                <div class="col-4" align="right">
+                    <router-link to="/cms/update-password" class="help"><i class="fa fa-lock"></i> change password</router-link>
+                </div>
+            </div>
         </div>
         <ErrorMessage v-if="this.is_error" :message="this.error_message" :icon="this.error_icon"/>
-        <Loading align="center" v-if="this.is_loading"/>
         <form v-on:submit.prevent="submit">
-            <div v-if="!this.is_loading">
-                <div class="form-group">
-                    <label>Name</label>
-                    <input v-model="name" type="text" class="form-control" placeholder="Name" maxlength="100" required/>
-                </div>
-                <div class="form-group">
-                    <label>Slug</label>
-                    <textarea v-model="slug" class="form-control" placeholder="Slug" maxlength="500" required></textarea>
-                </div>          
-                <div class="form-group">
-                    <label>Is Active</label>
-                    &nbsp;
-                    <toggle-button class="toggle-margin" :value="this.is_active" color="#82C7EB" :sync="true" :labels="true" @change="onActiveChange($event)"/>
-                </div>
-                <div align="left">
-                    <button id="back_btn" v-on:click="backToList()" type="button" class="btn btn-danger"><i class="fa fa-chevron-left"></i> Cancel</button>
-                    <button type="submit" id="submit_btn" class="btn btn-default"><i class="fa fa-save"></i> Save</button>
-                </div>
+            <div class="form-group p-0 col-sm-12 col-md-6 col-lg-4">
+                <label>Name</label>
+                <input v-model="name" type="text" class="form-control" placeholder="Name" maxlength="100" required/>
+            </div>
+            <div class="form-group p-0 col-sm-12 col-md-6 col-lg-4">
+                <label>Email</label>
+                <input v-model="email" type="email" class="form-control" placeholder="Email" maxlength="100" required/>
+            </div>
+            <div align="left">
+                <button id="back_btn" v-on:click="back()" type="button" class="btn btn-danger"><i class="fa fa-chevron-left"></i> Cancel</button>
+                <button type="submit" id="submit_btn" class="btn btn-default"><i class="fa fa-paper-plane"></i> Submit</button>
             </div>
         </form> 
     </div>
@@ -43,15 +42,11 @@ export default {
         Loading,
         ErrorMessage
     },
-    props : [
-        'id'
-    ],
     data(){
         return{
             //form data
             name: '',
-            slug: '',
-            is_active : '',
+            email: '',
 
             //loader
             is_loading: false,
@@ -63,14 +58,11 @@ export default {
         }
     },
     mounted(){
-        this.getDetail(this.id);
+        this.getDetail();
     },
     methods : {
-        onActiveChange(e){
-            this.is_active = e.value;
-        },
-        backToList(){
-            this.$emit('backToList');
+        back(){
+            this.$router.push('/cms');
         },
         setLoading(is_loading){
             let backBtn = document.getElementById('back_btn');
@@ -101,8 +93,7 @@ export default {
         },
         populateDetail(detailObj){
             this.name = detailObj.name;
-            this.slug = detailObj.slug;
-            this.is_active = detailObj.is_active===1 ? true : false;
+            this.email = detailObj.email;
         },
         getDetail(id){
             //hide error
@@ -111,17 +102,17 @@ export default {
             this.is_loading = true;
 
             //call API
-            axios.get('/api/admin/article_categories/'+id,{
+            axios.get('/api/admin/user',{
                 headers: userHelper.authenticationBearer().headers
             })
             .then(res => {
                 if(res.status===200){
                     //check if success
-                    if(res.data.is_success){
+                    if(typeof res.data.status === 'undefined'){
                         //success 
-                        this.populateDetail(res.data.data);
+                        this.populateDetail(res.data.user);
                     }else{
-                        //failed to add
+                        //failed to populate
                         let message = (typeof res.data.status !=='undefined' ? res.data.status : res.data.message);
                         this.showError(true, message, 'fa fa-info-circle');
                     }
@@ -142,7 +133,6 @@ export default {
                 this.setLoading(false);
             })
         },
-        //submit form
         submit(){
             //hide error
             this.showError(false);
@@ -153,12 +143,11 @@ export default {
             //post body
             let body = {
                 name : this.name,
-                slug : this.slug,
-                is_active : this.is_active,
+                email : this.email,
             }
 
             //call API
-            axios.put('/api/admin/article_categories/'+this.id, body, userHelper.authenticationBearer())
+            axios.put('/api/admin/profiles', body, userHelper.authenticationBearer())
             .then(res => {
                 if(res.status===200){
                     //check if success
@@ -170,12 +159,11 @@ export default {
                             position: config.toast_position
                         });
 
-                        //back to list and then refresh list
-                        this.$emit('backToList', true);
+                        //re vuex user
+                        this.$store.dispatch('getUser');
                     }else{
                         //failed to add
-                        let message = (typeof res.data.status !=='undefined' ? res.data.status : res.data.message);
-                        this.showError(true, message, 'fa fa-info-circle');
+                        this.showError(true, res.data.message, 'fa fa-info-circle');
                     }
                 }
                 else{

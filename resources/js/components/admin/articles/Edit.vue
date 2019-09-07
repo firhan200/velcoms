@@ -8,8 +8,8 @@
         <form v-on:submit.prevent="submit">
             <div v-if="!this.is_loading">
                 <div class="form-group">
-                    <label>Name</label>
-                    <input v-model="name" type="text" class="form-control" placeholder="Name" maxlength="100" required/>
+                    <label>Title</label>
+                    <input v-model="title" type="text" class="form-control" placeholder="Title" maxlength="100" required/>
                 </div>
                 <div class="form-group">
                     <label>Slug</label>
@@ -49,7 +49,7 @@ export default {
     data(){
         return{
             //form data
-            name: '',
+            title: '',
             slug: '',
             is_active : '',
 
@@ -100,7 +100,7 @@ export default {
             }
         },
         populateDetail(detailObj){
-            this.name = detailObj.name;
+            this.title = detailObj.title;
             this.slug = detailObj.slug;
             this.is_active = detailObj.is_active===1 ? true : false;
         },
@@ -111,7 +111,7 @@ export default {
             this.is_loading = true;
 
             //call API
-            axios.get('/api/admin/article_categories/'+id,{
+            axios.get('/api/admin/articles/'+id,{
                 headers: userHelper.authenticationBearer().headers
             })
             .then(res => {
@@ -152,13 +152,13 @@ export default {
 
             //post body
             let body = {
-                name : this.name,
+                title : this.title,
                 slug : this.slug,
                 is_active : this.is_active,
             }
 
             //call API
-            axios.put('/api/admin/article_categories/'+this.id, body, userHelper.authenticationBearer())
+            axios.put('/api/admin/articles/'+this.id, body, userHelper.authenticationBearer())
             .then(res => {
                 if(res.status===200){
                     //check if success

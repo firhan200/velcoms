@@ -123,9 +123,6 @@ export default {
                         //success
                         let user = res.data.user;
 
-                        //store name
-                        let store_name = user.type===userTypes.SUPER_ADMIN ? "Super" : user.store_name;
-
                         //save to state
                         context.commit('setUser', {
                             name : user.name,

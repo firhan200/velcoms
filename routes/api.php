@@ -20,6 +20,12 @@ Route::prefix('admin')->group(function(){
     Route::post('reset-password', 'Admin\AuthController@resetPassword');
     Route::get('user', 'Admin\AuthController@getAuthenticatedUser')->middleware('jwt.verify');
 
+    /* Profile */
+    Route::prefix('profiles')->group(function(){
+        Route::put('/', 'Admin\AuthController@updateProfile')->middleware('jwt.verify');
+        Route::put('/password', 'Admin\AuthController@updatePassword')->middleware('jwt.verify');
+    });
+
     /* Article Categories */
     Route::prefix('article_categories')->group(function(){
         Route::get('/', 'Admin\ArticleCategoryController@index')->middleware('jwt.verify');
@@ -27,5 +33,14 @@ Route::prefix('admin')->group(function(){
         Route::post('/', 'Admin\ArticleCategoryController@create')->middleware('jwt.verify');
         Route::put('/{id}', 'Admin\ArticleCategoryController@update')->middleware('jwt.verify');
         Route::delete('/{id}', 'Admin\ArticleCategoryController@delete')->middleware('jwt.verify');
+    });
+
+    /* Article */
+    Route::prefix('articles')->group(function(){
+        Route::get('/', 'Admin\ArticleController@index')->middleware('jwt.verify');
+        Route::get('/{id}', 'Admin\ArticleController@details')->middleware('jwt.verify');
+        Route::post('/', 'Admin\ArticleController@create')->middleware('jwt.verify');
+        Route::put('/{id}', 'Admin\ArticleController@update')->middleware('jwt.verify');
+        Route::delete('/{id}', 'Admin\ArticleController@delete')->middleware('jwt.verify');
     });
 });
