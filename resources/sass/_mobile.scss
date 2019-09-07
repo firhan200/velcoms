@@ -1,0 +1,17 @@
+/* 
+  ##Device = Mobiles
+*/
+
+@media (max-width: 767px) {
+    .m-center{
+        text-align: center;
+    }
+
+    .custom-table{
+        .body{
+            .row{
+                border-top:1px solid #bdbdbd;
+            }
+        }
+    }
+}

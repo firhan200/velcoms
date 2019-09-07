@@ -1,0 +1,160 @@
+<template>
+    <div>
+        <div class="page-wrapper chiller-theme toggled">
+            <button type="button" id="show-sidebar" class="btn btn-sm btn-default">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav id="sidebar" class="sidebar-wrapper">
+                <div class="sidebar-content">
+                    <div class="sidebar-brand">
+                        <a>Velcoms &copy; CMS 2019</a>
+                        <div id="close-sidebar">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                    </div>
+                    <div class="sidebar-header">
+                        <div class="user-pic">
+                            <img class="img-responsive img-rounded" src="https://raw.githubusercontent.com/azouaoui-med/pro-sidebar-template/gh-pages/src/img/user.jpg"
+                            alt="User picture">
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name">
+                                <strong>{{ this.$store.getters.getUser.name }}</strong>
+                            </span>
+                            <span class="user-status">
+                                Online
+                            </span>
+                        </div>
+                    </div>
+                    <!-- sidebar-header  -->
+                    <div class="sidebar-menu">
+                        <ul>
+                            <li class="header-menu">
+                                <span>General</span>
+                            </li>
+                            <li>
+                                <router-link to='/cms'>
+                                    <i class="fa fa-tachometer-alt"></i>
+                                    <span>Dashboard</span>
+                                </router-link>
+                            </li> 
+                            <li class="sidebar-dropdown">
+                                <a>
+                                    <i class="fa fa-book"></i>
+                                    <span>Article</span>
+                                </a>
+                                <div class="sidebar-submenu">
+                                    <ul>
+                                        <li>
+                                            <router-link to='/cms/articles'>List</router-link>
+                                        </li>
+                                        <li>
+                                            <router-link to='/cms/article_categories'>Categories</router-link>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <router-link to='/cms/sliders'>
+                                    <i class="fa fa-image"></i>
+                                    <span>Slider</span>
+                                </router-link>
+                            </li>
+                            <li class="sidebar-dropdown">
+                                <a>
+                                    <i class="fa fa-images"></i>
+                                    <span>Gallery</span>
+                                </a>
+                                <div class="sidebar-submenu">
+                                    <ul>
+                                        <li>
+                                            <router-link to='/cms/galleries'>Albums</router-link>
+                                        </li>
+                                        <li>
+                                            <router-link to='/cms/photos'>Photos</router-link>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <router-link to='/cms/social-links'>
+                                    <i class="fa fa-globe"></i>
+                                    <span>Social Link</span>
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link to='/cms/contacts'>
+                                    <i class="fa fa-envelope"></i>
+                                    <span>Contact</span>
+                                </router-link>
+                            </li>                      
+                            <li class="header-menu">
+                                <span>Settings</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- sidebar-menu  -->
+                </div>
+                <!-- sidebar-content  -->    
+
+                <!-- sidebar-footer  -->    
+                <div class="sidebar-footer">
+                    <a>
+                        <i class="fa fa-bell"></i>
+                        <span class="badge badge-pill badge-warning notification">3</span>
+                    </a>
+                    <a>
+                        <i class="fa fa-envelope"></i>
+                        <span class="badge badge-pill badge-success notification">7</span>
+                    </a>
+                    <a>
+                        <i class="fa fa-cog"></i>
+                        <span class="badge-sonar"></span>
+                    </a>
+                    <a data-toggle="modal" data-target="#logoutModal">
+                        <i class="fa fa-power-off"></i>
+                    </a>
+                </div>   
+            </nav>
+            <!-- sidebar-wrapper  -->
+            <main class="page-content">
+                <div class="container">
+                    <router-view></router-view>
+                </div>
+            </main>
+            <!-- page-content" -->
+        </div>
+        <!-- page-wrapper -->
+    </div>
+</template>
+
+<script>
+//libs
+import userHelper from './../../helpers/userHelper';
+
+export default {
+    mounted: function(){
+        //sidebar
+        jQuery(function ($) {
+            $(".sidebar-dropdown > a").click(function() {
+                $(".sidebar-submenu").slideUp(200);
+                if ($(this).parent().hasClass("active")) {
+                    $(".sidebar-dropdown").removeClass("active");
+                    $(this).parent().removeClass("active");
+                } else {
+                    $(".sidebar-dropdown").removeClass("active");
+                    $(this).next(".sidebar-submenu").slideDown(200);
+                    $(this).parent().addClass("active");
+                }
+            });
+
+            $("#close-sidebar").click(function() {
+                $(".page-wrapper").removeClass("toggled");
+            });
+            $("#show-sidebar").click(function() {
+                $(".page-wrapper").addClass("toggled");
+            });
+        });
+    }
+}
+</script>

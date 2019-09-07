@@ -1,0 +1,334 @@
+// Variables
+@import "variables";
+
+// Admin Sidebar
+@import "sidebar";
+@import "mobile";
+@import "tablet";
+
+body{
+    background-color:$body-bg;
+}
+
+#app{
+    background-color:$body-bg;
+}
+
+.bottom-space{
+    margin-bottom: 10px;
+}
+
+.full{
+    width : 100% !important;
+}
+
+.light{
+    color : $btn-text-color !important;
+}
+
+.btn-payment{
+    margin-bottom:10px;
+}
+
+.avatar{
+    max-width:30px;
+    max-height:30px;
+}
+
+.detail{
+    padding-top:10px;
+    padding-bottom: 10px;
+    .label{
+        font-weight:bold;
+    }
+    .body{
+
+    }
+}
+
+.toggle-margin{
+    margin-top:10px;
+}
+
+.help{
+    font-size:8pt;
+    color:#696969;
+}
+
+/* Button Style */
+.btn, .form-control{
+    border-radius: 15px;
+}
+
+.btn-default{
+    background-color:$default-color !important;
+    color:$btn-text-color;
+}
+
+.btn-default:hover,
+.btn-default:active,
+.btn-default:focus{
+    background-color:$default-color-hover;
+    color:$btn-text-color-hover;
+}
+
+.btn-outline-default{
+    border:1px solid $default-color !important;
+    color:$default-color;
+}
+
+.btn-outline-default:hover,
+.btn-outline-default:active,
+.btn-outline-default:focus{
+    background-color:$default-color-hover;
+    color:$btn-text-color-hover;
+}
+
+.btn-login{
+    width:100%;
+    height:40px;
+}
+/* Button Style */
+
+
+/* Default Link Style */
+.link{
+    cursor: pointer;
+    color:$link-color;
+}
+.link:hover{
+    text-decoration: underline;
+    color:$link-color-hover;
+}
+a{
+    color:$link-color;
+}
+a:hover{
+    color:$link-color-hover;
+}
+/* Default Link Style */
+
+.today-earn{
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.no-pad{
+    padding:0px !important;
+}
+
+.box{
+    padding:20px;
+    background-color:$box-color;
+    border:1px solid $box-border-color;
+    border-radius: 15px;
+
+    .page-title{
+        font-size:14pt;
+        font-weight: lighter;
+        margin-bottom: 10px;
+    }
+}
+
+.custom-table{
+    font-size:9pt !important;
+
+    .header{
+        font-weight: bold;
+    }
+
+    .body{
+        .row{
+            padding-top:10px;
+            padding-bottom: 10px;
+
+            .no-pad{
+                word-wrap: break-word;
+                padding:5px !important;
+            }
+        }
+    }
+}
+
+.d-total{
+    margin-bottom:20px;
+
+    .title{
+        color:#636262;
+        font-size: 10pt;
+        text-align: center;
+    }
+    .value{
+        color:#252525;
+        font-weight: bold;
+        font-size: 18pt;
+        text-align: center;
+    }
+}
+
+.d-content{
+    margin-bottom:20px;
+
+    .title{
+        margin-top:-10px;
+        margin-left:-5px;
+        font-weight: bold;
+
+        i{
+            font-size:8pt;
+        }
+    }
+}
+
+.orders{
+    li{
+        font-size:8pt;
+        margin-bottom:10px;
+        border-bottom:1px solid #f2f2f2;
+
+        .total-item{  
+            color:#696969;
+        }
+        .price{
+            text-align: right;
+            color:#1ea019;
+        }
+        .time{
+            text-align: right;
+        }
+    }
+}
+
+/* Image Particular size class */
+.small{
+    max-width:100px;
+    max-height: 100px;
+}
+.medium{
+    max-width:200px;
+    max-height: 200px;
+}
+.large{
+    max-width:300px;
+    max-height: 300px;
+}
+/* Image Particular size class */
+
+.a-right{
+    text-align: right;
+}
+
+.page-actions{
+    margin-bottom:10px;
+}
+
+.login-box{
+    margin-top:0px;
+    margin-bottom:50px;
+
+    .title{
+        text-align: center;
+        margin-bottom: 10px;
+    }
+}
+
+.horizon-menu{
+    list-style: none;
+    padding:0px;
+
+    li{
+        margin-top:5px;
+        float: right;
+
+        a{
+            cursor: pointer;
+            padding:5px;
+        }
+    }
+}
+
+.product{
+    cursor: pointer;
+    padding:5px;
+    border:0px solid #d6d6d6;
+    border-radius: 1px;
+
+    .product-img{
+        text-align: center;
+    }
+
+    .name{
+        margin-top:5px;
+        font-size:9pt;
+        font-weight: bold;
+    }
+    .desc{
+        font-size:8pt;
+        color:#535252;
+    }
+
+    .price{
+        text-align: right;
+        font-size:10pt;
+        font-weight: lighter;
+    }
+}
+
+.product:hover{
+    background-color:#f2f2f2;
+}
+
+.out-of-stock{
+    background-color: #f2f2f2;
+    opacity: 0.6;
+}
+
+.cost{
+    font-size:8pt;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom:1px solid #e6e6e6;
+
+    .quantity{
+        width:50px !important;
+    }
+}
+
+.total-cost{
+    font-size:8pt;
+    color:#252525;
+    font-weight: bold;
+    margin-top: 10px; 
+
+    .value{
+        font-weight: lighter;
+    }
+}
+
+.total-payment{
+    padding-top:10px;
+    padding-bottom:10px;
+    background-color:#f2f2f2;
+    margin-top: 20px;
+    font-size:10pt;
+    border-radius: 10px;
+}
+
+.product_categories{
+    list-style: none;
+    padding:0px;
+    font-size:10pt;
+    li{
+        margin-bottom: 5px;
+        float: left;
+        cursor: pointer;
+        padding: 5px;
+        background-color:$default-color;
+        margin-right:5px;
+        color:$btn-text-color;
+        border-radius: 5px;
+    }
+    li:hover{
+        background-color:$default-color-hover;
+    }
+}
