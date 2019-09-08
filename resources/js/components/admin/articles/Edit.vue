@@ -8,6 +8,17 @@
         <form v-on:submit.prevent="submit">
             <div v-if="!this.is_loading">
                 <div class="form-group">
+                    <label>Cover Photo</label>
+                    <div class="help">
+                        current image
+                    </div>
+                    <ImagePreviewer :photo="this.image_cover" :path="'/images/articles/'" size="large"/>
+                    <ImageUploader :id="'image_cover'" v-on:base64Result="handlePhotoChange"/>
+                    <div class="help">
+                        <i class="fa fa-info-circle"></i> leave this field empty if you dont want to change current image.
+                    </div>
+                </div>
+                <div class="form-group">
                     <label>Title</label>
                     <input v-model="title" type="text" class="form-control" placeholder="Title" maxlength="100" required/>
                 </div>
@@ -50,11 +61,15 @@ import config from './../../../config';
 //components
 import Loading from './../../Loading.vue';
 import ErrorMessage from './../../styles/ErrorMessage.vue';
+import ImageUploader from './../../styles/ImageUploader.vue';
+import ImagePreviewer from './../../styles/ImagePreviewer.vue';
 
 export default {
     components : {
         Loading,
-        ErrorMessage
+        ErrorMessage,
+        ImageUploader,
+        ImagePreviewer,
     },
     props : [
         'id'
@@ -65,6 +80,8 @@ export default {
             article_categories : [],
 
             //form data
+            image_cover: null,
+            new_image_cover: null,
             title: '',
             slug: '',
             body: '',
@@ -91,6 +108,9 @@ export default {
                 CKEDITOR.replace(document.getElementsByClassName('ckeditor')[0]);
                 //set body
                 CKEDITOR.instances.body.setData(this.body);
+
+                //init keyboard press
+                this.keyboardPress();   
             });
         });
     },
@@ -100,6 +120,9 @@ export default {
         },
         backToList(){
             this.$emit('backToList');
+        },
+        handlePhotoChange(base64String){
+            this.new_image_cover = base64String;
         },
         setLoading(is_loading){
             let backBtn = document.getElementById('back_btn');
@@ -163,6 +186,7 @@ export default {
             })
         },
         populateDetail(detailObj){
+            this.image_cover = detailObj.image_cover;
             this.title = detailObj.title;
             this.slug = detailObj.slug;
             this.article_category_id = detailObj.article_category_id;
@@ -217,6 +241,7 @@ export default {
 
             //post body
             let body = {
+                image_cover : this.new_image_cover,
                 title : this.title,
                 slug : this.slug,
                 article_category_id : this.article_category_id,
@@ -260,6 +285,19 @@ export default {
                 //hide loading
                 this.setLoading(false);
             })
+        },
+        keyboardPress(){
+            document.addEventListener("keydown", (event) => {
+                if (event.ctrlKey || event.metaKey) {
+                    switch (String.fromCharCode(event.which).toLowerCase()) {
+                    case 's': //CTRL + S
+                        event.preventDefault();
+                        document.getElementById('submit_btn').click();
+                        break;
+                    }
+                }
+                return false;
+            }, false);
         }
     }
 }

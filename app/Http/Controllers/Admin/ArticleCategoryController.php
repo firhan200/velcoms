@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class ArticleCategoryController extends Controller
+class ArticleCategoryController extends BaseController
 {
     //global variable
     protected $model;

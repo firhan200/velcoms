@@ -4,7 +4,7 @@
             New
         </div>
         <ErrorMessage v-if="this.is_error" :message="this.error_message" :icon="this.error_icon"/>
-        <form v-on:submit.prevent="submit">
+        <form id="submit_form" v-on:submit.prevent="submit">
             <div class="form-group">
                 <label>Name</label>
                 <input v-model="name" type="text" class="form-control" placeholder="Name" maxlength="100" required/>
@@ -49,6 +49,10 @@ export default {
             error_message: '',
             error_icon: ''
         }
+    },
+    mounted(){
+        //init keyboard press
+        this.keyboardPress();
     },
     methods : {
         backToList(){
@@ -131,6 +135,19 @@ export default {
                 //hide loading
                 this.setLoading(false);
             })
+        },
+        keyboardPress(){
+            document.addEventListener("keydown", (event) => {
+                if (event.ctrlKey || event.metaKey) {
+                    switch (String.fromCharCode(event.which).toLowerCase()) {
+                    case 's': //CTRL + S
+                        event.preventDefault();
+                        document.getElementById('submit_btn').click();
+                        break;
+                    }
+                }
+                return false;
+            }, false);
         }
     }
 }

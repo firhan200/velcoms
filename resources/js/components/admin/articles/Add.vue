@@ -6,6 +6,13 @@
         <ErrorMessage v-if="this.is_error" :message="this.error_message" :icon="this.error_icon"/>
         <form v-on:submit.prevent="submit">
             <div class="form-group">
+                <label>Cover Photo</label>
+                <ImageUploader :id="'image_cover'" v-on:base64Result="handlePhotoChange"/>
+                <div class="help">
+                    <i class="fa fa-info-circle"></i> this photo will be article cover
+                </div>
+            </div>
+            <div class="form-group">
                 <label>Title</label>
                 <input v-model="title" type="text" class="form-control" placeholder="Title" maxlength="100" required/>
             </div>
@@ -42,11 +49,13 @@ import config from './../../../config';
 //components
 import Loading from './../../Loading.vue';
 import ErrorMessage from './../../styles/ErrorMessage.vue';
+import ImageUploader from './../../styles/ImageUploader.vue';
 
 export default {
     components : {
         Loading,
-        ErrorMessage
+        ErrorMessage,
+        ImageUploader,
     },
     data(){
         return{
@@ -54,6 +63,7 @@ export default {
             article_categories : [],
 
             //form data
+            image_cover: null,
             title: '',
             slug: '',
             body: '',
@@ -74,10 +84,16 @@ export default {
         this.getArticleCategories();
 
         CKEDITOR.replace(document.getElementsByClassName('ckeditor')[0]);
+
+        //init keyboard press
+        this.keyboardPress();
     },
     methods : {
         backToList(){
             this.$emit('backToList');
+        },
+        handlePhotoChange(base64String){
+            this.image_cover = base64String;
         },
         setLoading(is_loading){
             let backBtn = document.getElementById('back_btn');
@@ -155,6 +171,7 @@ export default {
 
             //post body
             let body = {
+                image_cover : this.image_cover,
                 title : this.title,
                 slug : this.slug,
                 article_category_id : this.article_category_id,
@@ -197,6 +214,19 @@ export default {
                 //hide loading
                 this.setLoading(false);
             })
+        },
+        keyboardPress(){
+            document.addEventListener("keydown", (event) => {
+                if (event.ctrlKey || event.metaKey) {
+                    switch (String.fromCharCode(event.which).toLowerCase()) {
+                    case 's': //CTRL + S
+                        event.preventDefault();
+                        document.getElementById('submit_btn').click();
+                        break;
+                    }
+                }
+                return false;
+            }, false);
         }
     }
 }

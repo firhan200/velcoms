@@ -4,16 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use File;
 
-class ArticleController extends Controller
+class ArticleController extends BaseController
 {
     //global variable
     protected $model;
     protected $data;
 
     public function __construct(){
-         //init model
-         $this->model = new \App\Models\Article;
+        //init model
+        $this->model = new \App\Models\Article;
+
+        //image path
+        $this->data['image_path'] = public_path('/images/articles/');
     }
 
     /* ==================================================== */
@@ -102,7 +106,18 @@ class ArticleController extends Controller
 
         try{
             //init model
-            $model = $this->model;
+            $model = $this->model;       
+
+            //check image cover
+            if($request->input('image_cover')!=null){
+                $image_cover = $this->_convertBase64Image($request->input('image_cover'));
+                //get filename
+                $file_name = $image_cover['name'];
+                //save
+                File::put($this->data['image_path'].$file_name, base64_decode($image_cover['image']));
+                //add to model obj
+                $model->image_cover = $file_name;
+            }
 
             //fill data
             $model->title = $request->input('title');
@@ -169,6 +184,17 @@ class ArticleController extends Controller
             $modelObj = $model::where('id', $id)->where('is_deleted', 0)->first();
             if($modelObj!=null){
                 //update
+                //check image cover
+                if($request->input('image_cover')!=null){
+                    $image_cover = $this->_convertBase64Image($request->input('image_cover'));
+                    //get filename
+                    $file_name = $image_cover['name'];
+                    //save
+                    File::put($this->data['image_path'].$file_name, base64_decode($image_cover['image']));
+                    //add to model obj
+                    $modelObj->image_cover = $file_name;
+                }
+
                 $modelObj->title = $request->title;
                 $modelObj->slug = $request->slug;
                 $modelObj->body = $request->body;

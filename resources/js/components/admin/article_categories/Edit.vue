@@ -64,6 +64,9 @@ export default {
     },
     mounted(){
         this.getDetail(this.id);
+
+        //init keyboard press
+        this.keyboardPress();
     },
     methods : {
         onActiveChange(e){
@@ -193,6 +196,19 @@ export default {
                 //hide loading
                 this.setLoading(false);
             })
+        },
+        keyboardPress(){
+            document.addEventListener("keydown", (event) => {
+                if (event.ctrlKey || event.metaKey) {
+                    switch (String.fromCharCode(event.which).toLowerCase()) {
+                    case 's': //CTRL + S
+                        event.preventDefault();
+                        document.getElementById('submit_btn').click();
+                        break;
+                    }
+                }
+                return false;
+            }, false);
         }
     }
 }

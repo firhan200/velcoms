@@ -8,6 +8,14 @@
         <div v-if="!this.is_loading && !this.is_error">
             <div class="row detail">
                 <div class="col-sm-2 label">
+                    Cover
+                </div>
+                <div class="col-sm-10 body">
+                    <ImagePreviewer :photo="this.image_cover" :path="'/images/articles/'" size="large"/>
+                </div>
+            </div>
+            <div class="row detail">
+                <div class="col-sm-2 label">
                     Title
                 </div>
                 <div class="col-sm-10 body">
@@ -79,12 +87,14 @@ import config from './../../../config';
 import Loading from './../../Loading.vue';
 import ErrorMessage from './../../styles/ErrorMessage.vue';
 import IsActiveDisplay from './../../styles/IsActiveDisplay.vue';
+import ImagePreviewer from './../../styles/ImagePreviewer.vue';
 
 export default {
     components : {
         Loading,
         ErrorMessage,
-        IsActiveDisplay
+        IsActiveDisplay,
+        ImagePreviewer,
     },
     props : [
         'id'
@@ -92,6 +102,7 @@ export default {
     data(){
         return {
             // detail
+            image_cover : null,
             title : '',
             slug : '',
             body : '',
@@ -127,6 +138,7 @@ export default {
             }
         },
         populateDetail(detailObj){
+            this.image_cover = detailObj.image_cover;
             this.title = detailObj.title;
             this.slug = detailObj.slug;
             this.body = detailObj.body;
