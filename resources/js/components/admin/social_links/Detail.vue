@@ -8,28 +8,20 @@
         <div v-if="!this.is_loading && !this.is_error">
             <div class="row detail">
                 <div class="col-sm-2 label">
-                    Image
+                    Icon
                 </div>
                 <div class="col-sm-10 body">
-                    <ImagePreviewer :photo="this.image_name" path="/images/sliders/" size="large"/>
+                    <ImagePreviewer :photo="this.icon_name" path="/images/social_links/" size="large"/>
                 </div>
             </div>
             <div class="row detail">
                 <div class="col-sm-2 label">
-                    Title
+                    Name
                 </div>
                 <div class="col-sm-10 body">
-                    {{ this.title }}
+                    {{ this.name }}
                 </div>
             </div>
-            <div class="row detail">
-                <div class="col-sm-2 label">
-                    Sub Title
-                </div>
-                <div class="col-sm-10 body">
-                    {{ this.sub_title }}
-                </div>
-            </div> 
             <div class="row detail">
                 <div class="col-sm-2 label">
                     Link
@@ -40,13 +32,13 @@
             </div> 
             <div class="row detail">
                 <div class="col-sm-2 label">
-                    Is Text Shown
+                    Is Open New Tab
                     <div class="help">
-                        whether title and subtitle need to be displayed on slider.
+                        whether if icon or link click will open in new tab.
                     </div>
                 </div>
                 <div class="col-sm-10 body">
-                    <IsActiveDisplay :is_active="this.is_text_shown"/>
+                    <IsActiveDisplay :is_active="this.is_open_newtab"/>
                 </div>
             </div>
             <div class="row detail">
@@ -104,11 +96,10 @@ export default {
     data(){
         return {
             // detail
-            image_name : '',
+            icon_name : '',
+            name : '',
             link : '',
-            title : '',
-            sub_title : '',
-            is_text_shown : '',
+            is_open_newtab : '',
             is_active : '',
             created_at : '',
             updated_at : '',
@@ -139,11 +130,10 @@ export default {
             }
         },
         populateDetail(detailObj){
-            this.image_name = detailObj.image_name;
+            this.icon_name = detailObj.icon_name;
             this.link = detailObj.link;
-            this.title = detailObj.title;
-            this.sub_title = detailObj.sub_title;
-            this.is_text_shown = detailObj.is_text_shown===1 ? true : false;
+            this.name = detailObj.name;
+            this.is_open_newtab = detailObj.is_open_newtab===1 ? true : false;
             this.is_active = detailObj.is_active===1 ? true : false;
             this.created_at = detailObj.created_at;
             this.updated_at = detailObj.updated_at;
@@ -155,7 +145,7 @@ export default {
             this.is_loading = true;
 
             //call API
-            axios.get('/api/admin/sliders/'+id,{
+            axios.get('/api/admin/social_links/'+id,{
                 headers: userHelper.authenticationBearer().headers
             })
             .then(res => {

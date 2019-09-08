@@ -77,7 +77,7 @@
                                 </div>
                             </li>
                             <li>
-                                <router-link to='/cms/social-links'>
+                                <router-link to='/cms/social_links'>
                                     <i class="fa fa-globe"></i>
                                     <span>Social Link</span>
                                 </router-link>
