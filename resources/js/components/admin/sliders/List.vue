@@ -46,15 +46,24 @@
                 <div class="container-fluid custom-table">
                     <div class="header d-none d-md-block">
                         <div class="row">
+                            <div class="no-pad col-sm-2">
+                                Image
+                            </div>
                             <div class="no-pad col-sm-2">                            
-                                <span class="link" v-on:click="sortBy('name')">
-                                    Name
+                                <span class="link" v-on:click="sortBy('link')">
+                                    Link
                                     <SortArrow :desc="this.desc"/>
                                 </span>
                             </div>
-                            <div class="no-pad col-sm-6">
-                                <span class="link" v-on:click="sortBy('slug')">
-                                    Slug
+                            <div class="no-pad col-sm-2">
+                                <span class="link" v-on:click="sortBy('title')">
+                                    Title
+                                    <SortArrow :desc="this.desc"/>
+                                </span>
+                            </div>
+                            <div class="no-pad col-sm-2">
+                                <span class="link" v-on:click="sortBy('is_text_shown')">
+                                    Is Text Shown
                                     <SortArrow :desc="this.desc"/>
                                 </span>
                             </div>
@@ -75,10 +84,16 @@
                     <div class="body" v-if="!this.is_loading">
                         <div v-bind:key="data.id" v-for="data in this.datas" class="row">
                             <div class="no-pad col-sm-2 m-center">
-                                {{ data.name }}
+                                <ImagePreviewer :photo="data.image_name" path="/images/sliders/" size="small"/>
                             </div>
-                            <div class="no-pad col-sm-6 m-center">
-                                {{ data.slug }}
+                            <div class="no-pad col-sm-2 m-center">
+                                {{ data.link }}
+                            </div>
+                            <div class="no-pad col-sm-2 m-center">
+                                {{ data.title }}
+                            </div>
+                            <div class="no-pad col-sm-2 m-center">
+                                <IsActiveDisplay :is_active="data.is_text_shown"/>
                             </div>
                             <div class="no-pad col-sm-2 m-center">
                                 <IsActiveDisplay :is_active="data.is_active"/>
@@ -86,7 +101,7 @@
                             <div class="no-pad col-sm-2 m-center">
                                 <button v-on:click="showDetail(data.id)" class="btn btn-sm btn-default" title="View Details"><i class="fa fa-eye"></i></button>
                                 <button v-on:click="showEdit(data.id)" class="btn btn-sm btn-light" title="Edit"><i class="fa fa-cog"></i></button>
-                                <button v-on:click="showDeleteConfirm(data.id, data.name)" class="btn btn-sm btn-danger" title="Delete"><i class="fa fa-trash"></i></button>
+                                <button v-on:click="showDeleteConfirm(data.id, data.title)" class="btn btn-sm btn-danger" title="Delete"><i class="fa fa-trash"></i></button>
                             </div>
                         </div>
 
@@ -111,6 +126,7 @@ import Loading from './../../Loading.vue';
 import ErrorMessage from './../../styles/ErrorMessage.vue';
 import IsActiveDisplay from './../../styles/IsActiveDisplay.vue';
 import SortArrow from './../../styles/SortArrow.vue';
+import ImagePreviewer from './../../styles/ImagePreviewer.vue';
 import Detail from './Detail.vue';
 import Add from './Add.vue';
 import Edit from './Edit.vue';
@@ -121,6 +137,7 @@ export default {
         ErrorMessage,
         IsActiveDisplay,
         SortArrow,
+        ImagePreviewer,
         Detail,
         Add,
         Edit

@@ -69,7 +69,7 @@ class SliderController extends BaseController
             			where(function($query){
 			                $query->
 			                where('title', 'LIKE', "%".$this->data['keyword']."%")->
-			                orWhere('sub_title', 'LIKE', "%".$this->data['keyword']."%");
+			                orWhere('sub_title', 'LIKE', "%".$this->data['keyword']."%")->
 			                orWhere('link', 'LIKE', "%".$this->data['keyword']."%");
                         })->
             			orderBy($order_by, $sort)->
@@ -82,7 +82,7 @@ class SliderController extends BaseController
             			where(function($query){
 			                $query->
 			                where('title', 'LIKE', "%".$this->data['keyword']."%")->
-			                orWhere('sub_title', 'LIKE', "%".$this->data['keyword']."%");
+			                orWhere('sub_title', 'LIKE', "%".$this->data['keyword']."%")->
 			                orWhere('link', 'LIKE', "%".$this->data['keyword']."%");
                         })->
                         count();

@@ -24,6 +24,14 @@
                 <label>Link</label>
                 <input v-model="link" type="text" class="form-control" placeholder="Link" maxlength="200" required/>
             </div>
+            <div class="form-group">
+                <label>Is Text Shown</label>
+                &nbsp;
+                <toggle-button class="toggle-margin" :value="this.is_text_shown" color="#82C7EB" :sync="true" :labels="true" @change="onTextShownChange($event)"/>
+                <div class="help">
+                    choose whether title and subtitle need to be displayed on slider.
+                </div>
+            </div>
             <div align="left">
                 <button id="back_btn" v-on:click="backToList()" type="button" class="btn btn-danger"><i class="fa fa-chevron-left"></i> Cancel</button>
                 <button type="submit" id="submit_btn" class="btn btn-default"><i class="fa fa-paper-plane"></i> Submit</button>
@@ -55,6 +63,7 @@ export default {
             title: '',
             sub_title: '',
             link: '',
+            is_text_shown : true,
 
             //loader
             is_loading: false,
@@ -72,6 +81,9 @@ export default {
     methods : {
         backToList(){
             this.$emit('backToList');
+        },
+        onTextShownChange(e){
+            this.is_text_shown = e.value;
         },
         handlePhotoChange(base64String){
             this.image_name = base64String;
@@ -138,6 +150,7 @@ export default {
                 title : this.title,
                 sub_title : this.sub_title,
                 link : this.link,
+                is_text_shown : this.is_text_shown,
             }
 
             //validation

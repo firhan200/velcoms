@@ -5281,6 +5281,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 //libs
 
  //components
@@ -5301,6 +5309,7 @@ __webpack_require__.r(__webpack_exports__);
       title: '',
       sub_title: '',
       link: '',
+      is_text_shown: true,
       //loader
       is_loading: false,
       //error
@@ -5316,6 +5325,9 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     backToList: function backToList() {
       this.$emit('backToList');
+    },
+    onTextShownChange: function onTextShownChange(e) {
+      this.is_text_shown = e.value;
     },
     handlePhotoChange: function handlePhotoChange(base64String) {
       this.image_name = base64String;
@@ -5384,7 +5396,8 @@ __webpack_require__.r(__webpack_exports__);
         image_name: this.image_name,
         title: this.title,
         sub_title: this.sub_title,
-        link: this.link
+        link: this.link,
+        is_text_shown: this.is_text_shown
       }; //validation
 
       if (this.isValid(body)) {
@@ -5463,6 +5476,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Loading_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../../Loading.vue */ "./resources/js/components/Loading.vue");
 /* harmony import */ var _styles_ErrorMessage_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../../styles/ErrorMessage.vue */ "./resources/js/components/styles/ErrorMessage.vue");
 /* harmony import */ var _styles_IsActiveDisplay_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./../../styles/IsActiveDisplay.vue */ "./resources/js/components/styles/IsActiveDisplay.vue");
+/* harmony import */ var _styles_ImagePreviewer_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./../../styles/ImagePreviewer.vue */ "./resources/js/components/styles/ImagePreviewer.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5525,11 +5566,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     Loading: _Loading_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
     ErrorMessage: _styles_ErrorMessage_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
-    IsActiveDisplay: _styles_IsActiveDisplay_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
+    IsActiveDisplay: _styles_IsActiveDisplay_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
+    ImagePreviewer: _styles_ImagePreviewer_vue__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
   props: ['id'],
   data: function data() {
@@ -5565,8 +5608,11 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     populateDetail: function populateDetail(detailObj) {
-      this.name = detailObj.name;
-      this.slug = detailObj.slug;
+      this.image_name = detailObj.image_name;
+      this.link = detailObj.link;
+      this.title = detailObj.title;
+      this.sub_title = detailObj.sub_title;
+      this.is_text_shown = detailObj.is_text_shown === 1 ? true : false;
       this.is_active = detailObj.is_active === 1 ? true : false;
       this.created_at = detailObj.created_at;
       this.updated_at = detailObj.updated_at;
@@ -5579,7 +5625,7 @@ __webpack_require__.r(__webpack_exports__);
 
       this.is_loading = true; //call API
 
-      axios.get('/api/admin/article_categories/' + id, {
+      axios.get('/api/admin/sliders/' + id, {
         headers: _helpers_userHelper__WEBPACK_IMPORTED_MODULE_0__["default"].authenticationBearer().headers
       }).then(function (res) {
         if (res.status === 200) {
@@ -5629,6 +5675,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../../../config */ "./resources/js/config.js");
 /* harmony import */ var _Loading_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../../Loading.vue */ "./resources/js/components/Loading.vue");
 /* harmony import */ var _styles_ErrorMessage_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../../styles/ErrorMessage.vue */ "./resources/js/components/styles/ErrorMessage.vue");
+/* harmony import */ var _styles_ImageUploader_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./../../styles/ImageUploader.vue */ "./resources/js/components/styles/ImageUploader.vue");
+/* harmony import */ var _styles_ImagePreviewer_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./../../styles/ImagePreviewer.vue */ "./resources/js/components/styles/ImagePreviewer.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5666,17 +5737,25 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     Loading: _Loading_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
-    ErrorMessage: _styles_ErrorMessage_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
+    ErrorMessage: _styles_ErrorMessage_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+    ImageUploader: _styles_ImageUploader_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
+    ImagePreviewer: _styles_ImagePreviewer_vue__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
   props: ['id'],
   data: function data() {
     return {
       //form data
-      name: '',
-      slug: '',
+      image_name: null,
+      new_image_name: null,
+      title: '',
+      sub_title: '',
+      link: '',
+      is_text_shown: true,
       is_active: '',
       //loader
       is_loading: false,
@@ -5697,6 +5776,12 @@ __webpack_require__.r(__webpack_exports__);
     },
     backToList: function backToList() {
       this.$emit('backToList');
+    },
+    onTextShownChange: function onTextShownChange(e) {
+      this.is_text_shown = e.value;
+    },
+    handlePhotoChange: function handlePhotoChange(base64String) {
+      this.new_image_name = base64String;
     },
     setLoading: function setLoading(is_loading) {
       var backBtn = document.getElementById('back_btn');
@@ -5729,8 +5814,11 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     populateDetail: function populateDetail(detailObj) {
-      this.name = detailObj.name;
-      this.slug = detailObj.slug;
+      this.image_name = detailObj.image_name;
+      this.title = detailObj.title;
+      this.sub_title = detailObj.sub_title;
+      this.link = detailObj.link;
+      this.is_text_shown = detailObj.is_text_shown === 1 ? true : false;
       this.is_active = detailObj.is_active === 1 ? true : false;
     },
     getDetail: function getDetail(id) {
@@ -5741,7 +5829,7 @@ __webpack_require__.r(__webpack_exports__);
 
       this.is_loading = true; //call API
 
-      axios.get('/api/admin/article_categories/' + id, {
+      axios.get('/api/admin/sliders/' + id, {
         headers: _helpers_userHelper__WEBPACK_IMPORTED_MODULE_0__["default"].authenticationBearer().headers
       }).then(function (res) {
         if (res.status === 200) {
@@ -5780,12 +5868,15 @@ __webpack_require__.r(__webpack_exports__);
       this.setLoading(true); //post body
 
       var body = {
-        name: this.name,
-        slug: this.slug,
+        image_name: this.new_image_name,
+        title: this.title,
+        sub_title: this.sub_title,
+        link: this.link,
+        is_text_shown: this.is_text_shown,
         is_active: this.is_active
       }; //call API
 
-      axios.put('/api/admin/article_categories/' + this.id, body, _helpers_userHelper__WEBPACK_IMPORTED_MODULE_0__["default"].authenticationBearer()).then(function (res) {
+      axios.put('/api/admin/sliders/' + this.id, body, _helpers_userHelper__WEBPACK_IMPORTED_MODULE_0__["default"].authenticationBearer()).then(function (res) {
         if (res.status === 200) {
           //check if success
           if (res.data.is_success) {
@@ -5854,9 +5945,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _styles_ErrorMessage_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../../styles/ErrorMessage.vue */ "./resources/js/components/styles/ErrorMessage.vue");
 /* harmony import */ var _styles_IsActiveDisplay_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./../../styles/IsActiveDisplay.vue */ "./resources/js/components/styles/IsActiveDisplay.vue");
 /* harmony import */ var _styles_SortArrow_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./../../styles/SortArrow.vue */ "./resources/js/components/styles/SortArrow.vue");
-/* harmony import */ var _Detail_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Detail.vue */ "./resources/js/components/admin/sliders/Detail.vue");
-/* harmony import */ var _Add_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Add.vue */ "./resources/js/components/admin/sliders/Add.vue");
-/* harmony import */ var _Edit_vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./Edit.vue */ "./resources/js/components/admin/sliders/Edit.vue");
+/* harmony import */ var _styles_ImagePreviewer_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./../../styles/ImagePreviewer.vue */ "./resources/js/components/styles/ImagePreviewer.vue");
+/* harmony import */ var _Detail_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Detail.vue */ "./resources/js/components/admin/sliders/Detail.vue");
+/* harmony import */ var _Add_vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./Add.vue */ "./resources/js/components/admin/sliders/Add.vue");
+/* harmony import */ var _Edit_vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Edit.vue */ "./resources/js/components/admin/sliders/Edit.vue");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -5968,9 +6060,25 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //libs
 
  //components
+
 
 
 
@@ -5985,9 +6093,10 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     ErrorMessage: _styles_ErrorMessage_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
     IsActiveDisplay: _styles_IsActiveDisplay_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
     SortArrow: _styles_SortArrow_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
-    Detail: _Detail_vue__WEBPACK_IMPORTED_MODULE_6__["default"],
-    Add: _Add_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
-    Edit: _Edit_vue__WEBPACK_IMPORTED_MODULE_8__["default"]
+    ImagePreviewer: _styles_ImagePreviewer_vue__WEBPACK_IMPORTED_MODULE_6__["default"],
+    Detail: _Detail_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    Add: _Add_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
+    Edit: _Edit_vue__WEBPACK_IMPORTED_MODULE_9__["default"]
   },
   data: function data() {
     return {
@@ -42907,7 +43016,7 @@ var render = function() {
                                           click: function($event) {
                                             return _vm.showDeleteConfirm(
                                               data.id,
-                                              data.name
+                                              data.title
                                             )
                                           }
                                         }
@@ -43648,6 +43757,36 @@ var render = function() {
             })
           ]),
           _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "form-group" },
+            [
+              _c("label", [_vm._v("Is Text Shown")]),
+              _vm._v("\n             \n            "),
+              _c("toggle-button", {
+                staticClass: "toggle-margin",
+                attrs: {
+                  value: this.is_text_shown,
+                  color: "#82C7EB",
+                  sync: true,
+                  labels: true
+                },
+                on: {
+                  change: function($event) {
+                    return _vm.onTextShownChange($event)
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c("div", { staticClass: "help" }, [
+                _vm._v(
+                  "\n                choose whether title and subtitle need to be displayed on slider.\n            "
+                )
+              ])
+            ],
+            1
+          ),
+          _vm._v(" "),
           _c("div", { attrs: { align: "left" } }, [
             _c(
               "button",
@@ -43741,26 +43880,76 @@ var render = function() {
         ? _c("div", [
             _c("div", { staticClass: "row detail" }, [
               _c("div", { staticClass: "col-sm-2 label" }, [
-                _vm._v("\n                Name\n            ")
+                _vm._v("\n                Image\n            ")
+              ]),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "col-sm-10 body" },
+                [
+                  _c("ImagePreviewer", {
+                    attrs: {
+                      photo: this.image_name,
+                      path: "/images/sliders/",
+                      size: "large"
+                    }
+                  })
+                ],
+                1
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row detail" }, [
+              _c("div", { staticClass: "col-sm-2 label" }, [
+                _vm._v("\n                Title\n            ")
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "col-sm-10 body" }, [
                 _vm._v(
-                  "\n                " + _vm._s(this.name) + "\n            "
+                  "\n                " + _vm._s(this.title) + "\n            "
                 )
               ])
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "row detail" }, [
               _c("div", { staticClass: "col-sm-2 label" }, [
-                _vm._v("\n                Slug\n            ")
+                _vm._v("\n                Sub Title\n            ")
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "col-sm-10 body" }, [
                 _vm._v(
-                  "\n                " + _vm._s(this.slug) + "\n            "
+                  "\n                " +
+                    _vm._s(this.sub_title) +
+                    "\n            "
                 )
               ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row detail" }, [
+              _c("div", { staticClass: "col-sm-2 label" }, [
+                _vm._v("\n                Link\n            ")
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-sm-10 body" }, [
+                _c("a", { attrs: { href: this.link, target: "_blank" } }, [
+                  _vm._v(_vm._s(this.link))
+                ])
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row detail" }, [
+              _vm._m(0),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "col-sm-10 body" },
+                [
+                  _c("IsActiveDisplay", {
+                    attrs: { is_active: this.is_text_shown }
+                  })
+                ],
+                1
+              )
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "row detail" }, [
@@ -43829,7 +44018,21 @@ var render = function() {
     1
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-sm-2 label" }, [
+      _vm._v("\n                Is Text Shown\n                "),
+      _c("div", { staticClass: "help" }, [
+        _vm._v(
+          "\n                    whether title and subtitle need to be displayed on slider.\n                "
+        )
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -43882,66 +44085,157 @@ var render = function() {
         [
           !this.is_loading
             ? _c("div", [
+                _c(
+                  "div",
+                  { staticClass: "form-group" },
+                  [
+                    _c("label", [_vm._v("Image")]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "help" }, [
+                      _vm._v(
+                        "\n                    current image\n                "
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("ImagePreviewer", {
+                      attrs: {
+                        photo: this.image_name,
+                        path: "/images/sliders/",
+                        size: "large"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("ImageUploader", {
+                      attrs: { id: "image_name" },
+                      on: { base64Result: _vm.handlePhotoChange }
+                    }),
+                    _vm._v(" "),
+                    _vm._m(0)
+                  ],
+                  1
+                ),
+                _vm._v(" "),
                 _c("div", { staticClass: "form-group" }, [
-                  _c("label", [_vm._v("Name")]),
+                  _c("label", [_vm._v("Title")]),
                   _vm._v(" "),
                   _c("input", {
                     directives: [
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.name,
-                        expression: "name"
+                        value: _vm.title,
+                        expression: "title"
                       }
                     ],
                     staticClass: "form-control",
                     attrs: {
                       type: "text",
-                      placeholder: "Name",
+                      placeholder: "Title",
                       maxlength: "100",
                       required: ""
                     },
-                    domProps: { value: _vm.name },
+                    domProps: { value: _vm.title },
                     on: {
                       input: function($event) {
                         if ($event.target.composing) {
                           return
                         }
-                        _vm.name = $event.target.value
+                        _vm.title = $event.target.value
                       }
                     }
                   })
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "form-group" }, [
-                  _c("label", [_vm._v("Slug")]),
+                  _c("label", [_vm._v("Sub Title")]),
                   _vm._v(" "),
-                  _c("textarea", {
+                  _c("input", {
                     directives: [
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.slug,
-                        expression: "slug"
+                        value: _vm.sub_title,
+                        expression: "sub_title"
                       }
                     ],
                     staticClass: "form-control",
                     attrs: {
-                      placeholder: "Slug",
-                      maxlength: "500",
-                      required: ""
+                      type: "text",
+                      placeholder: "Sub Title",
+                      maxlength: "100"
                     },
-                    domProps: { value: _vm.slug },
+                    domProps: { value: _vm.sub_title },
                     on: {
                       input: function($event) {
                         if ($event.target.composing) {
                           return
                         }
-                        _vm.slug = $event.target.value
+                        _vm.sub_title = $event.target.value
                       }
                     }
                   })
                 ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", [_vm._v("Link")]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.link,
+                        expression: "link"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      placeholder: "Link",
+                      maxlength: "200",
+                      required: ""
+                    },
+                    domProps: { value: _vm.link },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.link = $event.target.value
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "form-group" },
+                  [
+                    _c("label", [_vm._v("Is Text Shown")]),
+                    _vm._v("\n                 \n                "),
+                    _c("toggle-button", {
+                      staticClass: "toggle-margin",
+                      attrs: {
+                        value: this.is_text_shown,
+                        color: "#82C7EB",
+                        sync: true,
+                        labels: true
+                      },
+                      on: {
+                        change: function($event) {
+                          return _vm.onTextShownChange($event)
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "help" }, [
+                      _vm._v(
+                        "\n                    choose whether title and subtitle need to be displayed on slider.\n                "
+                      )
+                    ])
+                  ],
+                  1
+                ),
                 _vm._v(" "),
                 _c(
                   "div",
@@ -43985,7 +44279,7 @@ var render = function() {
                     ]
                   ),
                   _vm._v(" "),
-                  _vm._m(0)
+                  _vm._m(1)
                 ])
               ])
             : _vm._e()
@@ -43996,6 +44290,15 @@ var render = function() {
   )
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "help" }, [
+      _c("i", { staticClass: "fa fa-info-circle" }),
+      _vm._v(" this photo will be slider image\n                ")
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -44173,19 +44476,25 @@ var render = function() {
                   _c("div", { staticClass: "header d-none d-md-block" }, [
                     _c("div", { staticClass: "row" }, [
                       _c("div", { staticClass: "no-pad col-sm-2" }, [
+                        _vm._v(
+                          "\n                            Image\n                        "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "no-pad col-sm-2" }, [
                         _c(
                           "span",
                           {
                             staticClass: "link",
                             on: {
                               click: function($event) {
-                                return _vm.sortBy("name")
+                                return _vm.sortBy("link")
                               }
                             }
                           },
                           [
                             _vm._v(
-                              "\n                                Name\n                                "
+                              "\n                                Link\n                                "
                             ),
                             _c("SortArrow", { attrs: { desc: this.desc } })
                           ],
@@ -44193,20 +44502,41 @@ var render = function() {
                         )
                       ]),
                       _vm._v(" "),
-                      _c("div", { staticClass: "no-pad col-sm-6" }, [
+                      _c("div", { staticClass: "no-pad col-sm-2" }, [
                         _c(
                           "span",
                           {
                             staticClass: "link",
                             on: {
                               click: function($event) {
-                                return _vm.sortBy("slug")
+                                return _vm.sortBy("title")
                               }
                             }
                           },
                           [
                             _vm._v(
-                              "\n                                Slug\n                                "
+                              "\n                                Title\n                                "
+                            ),
+                            _c("SortArrow", { attrs: { desc: this.desc } })
+                          ],
+                          1
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "no-pad col-sm-2" }, [
+                        _c(
+                          "span",
+                          {
+                            staticClass: "link",
+                            on: {
+                              click: function($event) {
+                                return _vm.sortBy("is_text_shown")
+                              }
+                            }
+                          },
+                          [
+                            _vm._v(
+                              "\n                                Is Text Shown\n                                "
                             ),
                             _c("SortArrow", { attrs: { desc: this.desc } })
                           ],
@@ -44266,9 +44596,24 @@ var render = function() {
                                   "div",
                                   { staticClass: "no-pad col-sm-2 m-center" },
                                   [
+                                    _c("ImagePreviewer", {
+                                      attrs: {
+                                        photo: data.image_name,
+                                        path: "/images/sliders/",
+                                        size: "small"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "no-pad col-sm-2 m-center" },
+                                  [
                                     _vm._v(
                                       "\n                            " +
-                                        _vm._s(data.name) +
+                                        _vm._s(data.link) +
                                         "\n                        "
                                     )
                                   ]
@@ -44276,14 +44621,25 @@ var render = function() {
                                 _vm._v(" "),
                                 _c(
                                   "div",
-                                  { staticClass: "no-pad col-sm-6 m-center" },
+                                  { staticClass: "no-pad col-sm-2 m-center" },
                                   [
                                     _vm._v(
                                       "\n                            " +
-                                        _vm._s(data.slug) +
+                                        _vm._s(data.title) +
                                         "\n                        "
                                     )
                                   ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "no-pad col-sm-2 m-center" },
+                                  [
+                                    _c("IsActiveDisplay", {
+                                      attrs: { is_active: data.is_text_shown }
+                                    })
+                                  ],
+                                  1
                                 ),
                                 _vm._v(" "),
                                 _c(
@@ -44338,7 +44694,7 @@ var render = function() {
                                           click: function($event) {
                                             return _vm.showDeleteConfirm(
                                               data.id,
-                                              data.name
+                                              data.title
                                             )
                                           }
                                         }
@@ -62259,14 +62615,15 @@ __webpack_require__.r(__webpack_exports__);
 /*!*******************************************************!*\
   !*** ./resources/js/components/admin/sliders/Add.vue ***!
   \*******************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Add_vue_vue_type_template_id_69fcb5ae___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Add.vue?vue&type=template&id=69fcb5ae& */ "./resources/js/components/admin/sliders/Add.vue?vue&type=template&id=69fcb5ae&");
 /* harmony import */ var _Add_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Add.vue?vue&type=script&lang=js& */ "./resources/js/components/admin/sliders/Add.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _Add_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _Add_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -62296,7 +62653,7 @@ component.options.__file = "resources/js/components/admin/sliders/Add.vue"
 /*!********************************************************************************!*\
   !*** ./resources/js/components/admin/sliders/Add.vue?vue&type=script&lang=js& ***!
   \********************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

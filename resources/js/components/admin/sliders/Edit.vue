@@ -8,13 +8,36 @@
         <form v-on:submit.prevent="submit">
             <div v-if="!this.is_loading">
                 <div class="form-group">
-                    <label>Name</label>
-                    <input v-model="name" type="text" class="form-control" placeholder="Name" maxlength="100" required/>
+                    <label>Image</label>
+                    <div class="help">
+                        current image
+                    </div>
+                    <ImagePreviewer :photo="this.image_name" :path="'/images/sliders/'" size="large"/>
+                    <ImageUploader :id="'image_name'" v-on:base64Result="handlePhotoChange"/>
+                    <div class="help">
+                        <i class="fa fa-info-circle"></i> this photo will be slider image
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>Slug</label>
-                    <textarea v-model="slug" class="form-control" placeholder="Slug" maxlength="500" required></textarea>
-                </div>          
+                    <label>Title</label>
+                    <input v-model="title" type="text" class="form-control" placeholder="Title" maxlength="100" required/>
+                </div>
+                <div class="form-group">
+                    <label>Sub Title</label>
+                    <input v-model="sub_title" type="text" class="form-control" placeholder="Sub Title" maxlength="100"/>
+                </div>
+                <div class="form-group">
+                    <label>Link</label>
+                    <input v-model="link" type="text" class="form-control" placeholder="Link" maxlength="200" required/>
+                </div>
+                <div class="form-group">
+                    <label>Is Text Shown</label>
+                    &nbsp;
+                    <toggle-button class="toggle-margin" :value="this.is_text_shown" color="#82C7EB" :sync="true" :labels="true" @change="onTextShownChange($event)"/>
+                    <div class="help">
+                        choose whether title and subtitle need to be displayed on slider.
+                    </div>
+                </div>        
                 <div class="form-group">
                     <label>Is Active</label>
                     &nbsp;
@@ -37,11 +60,15 @@ import config from './../../../config';
 //components
 import Loading from './../../Loading.vue';
 import ErrorMessage from './../../styles/ErrorMessage.vue';
+import ImageUploader from './../../styles/ImageUploader.vue';
+import ImagePreviewer from './../../styles/ImagePreviewer.vue';
 
 export default {
     components : {
         Loading,
-        ErrorMessage
+        ErrorMessage,
+        ImageUploader,
+        ImagePreviewer,
     },
     props : [
         'id'
@@ -49,8 +76,12 @@ export default {
     data(){
         return{
             //form data
-            name: '',
-            slug: '',
+            image_name: null,
+            new_image_name: null,
+            title: '',
+            sub_title: '',
+            link: '',
+            is_text_shown : true,
             is_active : '',
 
             //loader
@@ -74,6 +105,12 @@ export default {
         },
         backToList(){
             this.$emit('backToList');
+        },
+        onTextShownChange(e){
+            this.is_text_shown = e.value;
+        },
+        handlePhotoChange(base64String){
+            this.new_image_name = base64String;
         },
         setLoading(is_loading){
             let backBtn = document.getElementById('back_btn');
@@ -103,8 +140,11 @@ export default {
             }
         },
         populateDetail(detailObj){
-            this.name = detailObj.name;
-            this.slug = detailObj.slug;
+            this.image_name = detailObj.image_name;
+            this.title = detailObj.title;
+            this.sub_title = detailObj.sub_title;
+            this.link = detailObj.link;
+            this.is_text_shown = detailObj.is_text_shown===1 ? true : false;
             this.is_active = detailObj.is_active===1 ? true : false;
         },
         getDetail(id){
@@ -114,7 +154,7 @@ export default {
             this.is_loading = true;
 
             //call API
-            axios.get('/api/admin/article_categories/'+id,{
+            axios.get('/api/admin/sliders/'+id,{
                 headers: userHelper.authenticationBearer().headers
             })
             .then(res => {
@@ -155,13 +195,16 @@ export default {
 
             //post body
             let body = {
-                name : this.name,
-                slug : this.slug,
+                image_name : this.new_image_name,
+                title : this.title,
+                sub_title : this.sub_title,
+                link : this.link,
+                is_text_shown : this.is_text_shown,
                 is_active : this.is_active,
             }
 
             //call API
-            axios.put('/api/admin/article_categories/'+this.id, body, userHelper.authenticationBearer())
+            axios.put('/api/admin/sliders/'+this.id, body, userHelper.authenticationBearer())
             .then(res => {
                 if(res.status===200){
                     //check if success

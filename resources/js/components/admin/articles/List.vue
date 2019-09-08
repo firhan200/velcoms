@@ -92,7 +92,7 @@
                             <div class="no-pad col-sm-2 m-center">
                                 <button v-on:click="showDetail(data.id)" class="btn btn-sm btn-default" title="View Details"><i class="fa fa-eye"></i></button>
                                 <button v-on:click="showEdit(data.id)" class="btn btn-sm btn-light" title="Edit"><i class="fa fa-cog"></i></button>
-                                <button v-on:click="showDeleteConfirm(data.id, data.name)" class="btn btn-sm btn-danger" title="Delete"><i class="fa fa-trash"></i></button>
+                                <button v-on:click="showDeleteConfirm(data.id, data.title)" class="btn btn-sm btn-danger" title="Delete"><i class="fa fa-trash"></i></button>
                             </div>
                         </div>
 
