@@ -43,4 +43,13 @@ Route::prefix('admin')->group(function(){
         Route::put('/{id}', 'Admin\ArticleController@update')->middleware('jwt.verify');
         Route::delete('/{id}', 'Admin\ArticleController@delete')->middleware('jwt.verify');
     });
+
+    /* Article */
+    Route::prefix('sliders')->group(function(){
+        Route::get('/', 'Admin\SliderController@index')->middleware('jwt.verify');
+        Route::get('/{id}', 'Admin\SliderController@details')->middleware('jwt.verify');
+        Route::post('/', 'Admin\SliderController@create')->middleware('jwt.verify');
+        Route::put('/{id}', 'Admin\SliderController@update')->middleware('jwt.verify');
+        Route::delete('/{id}', 'Admin\SliderController@delete')->middleware('jwt.verify');
+    });
 });

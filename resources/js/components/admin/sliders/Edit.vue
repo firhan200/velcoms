@@ -145,20 +145,6 @@ export default {
                 this.setLoading(false);
             })
         },
-        //input validation, 
-        isValid(body){
-            //init errors array
-            let errors = [];
-
-            //start validating, put yur validation here
-
-            //check if input is valid or not
-            if(errors.length > 0){
-                return false;
-            }else{
-                return true;
-            }
-        },
         //submit form
         submit(){
             //hide error
@@ -174,51 +160,42 @@ export default {
                 is_active : this.is_active,
             }
 
-            //validation
-            if(this.isValid(body)){
-                //call API
-                axios.put('/api/admin/article_categories/'+this.id, body, userHelper.authenticationBearer())
-                .then(res => {
-                    if(res.status===200){
-                        //check if success
-                        if(res.data.is_success){
-                            //success add
-                            this.$toast.open({
-                                message: 'Successfully update data.',
-                                type: 'success',
-                                position: config.toast_position
-                            });
+            //call API
+            axios.put('/api/admin/article_categories/'+this.id, body, userHelper.authenticationBearer())
+            .then(res => {
+                if(res.status===200){
+                    //check if success
+                    if(res.data.is_success){
+                        //success add
+                        this.$toast.open({
+                            message: 'Successfully update data.',
+                            type: 'success',
+                            position: config.toast_position
+                        });
 
-                            //back to list and then refresh list
-                            this.$emit('backToList', true);
-                        }else{
-                            //failed to add
-                            let message = (typeof res.data.status !=='undefined' ? res.data.status : res.data.message);
-                            this.showError(true, message, 'fa fa-info-circle');
-                        }
+                        //back to list and then refresh list
+                        this.$emit('backToList', true);
+                    }else{
+                        //failed to add
+                        let message = (typeof res.data.status !=='undefined' ? res.data.status : res.data.message);
+                        this.showError(true, message, 'fa fa-info-circle');
                     }
-                    else{
-                        //error response
-                        this.showError(true, 'error code: '+res.status+' '+res.statusText, 'fa fa-info-circle');
-                    }
-
-                    //hide loading
-                    this.setLoading(false);
-                })
-                .catch(err => {
-                    //error
-                    this.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle');
-
-                    //hide loading
-                    this.setLoading(false);
-                })
-            }else{
-                //hide error
-                this.showError(false);
+                }
+                else{
+                    //error response
+                    this.showError(true, 'error code: '+res.status+' '+res.statusText, 'fa fa-info-circle');
+                }
 
                 //hide loading
                 this.setLoading(false);
-            }
+            })
+            .catch(err => {
+                //error
+                this.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle');
+
+                //hide loading
+                this.setLoading(false);
+            })
         },
         keyboardPress(){
             document.addEventListener("keydown", (event) => {

@@ -18,6 +18,7 @@ import AdminChangePassword from './components/admin/profiles/ChangePassword';
 /* CRUD */
 import AdminArticleCategories from './components/admin/article_categories/List';
 import AdminArticles from './components/admin/articles/List';
+import AdminSliders from './components/admin/sliders/List';
 
 //use router
 Vue.use(VueRouter);
@@ -62,6 +63,10 @@ const router = new VueRouter({
                 {
                     path: 'articles',
                     component : AdminArticles
+                },
+                {
+                    path: 'sliders',
+                    component : AdminSliders
                 },
             ]
         }
