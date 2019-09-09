@@ -19,6 +19,7 @@ Route::prefix('admin')->group(function(){
     Route::get('reset-password-check', 'Admin\AuthController@resetPasswordCheckLink');
     Route::post('reset-password', 'Admin\AuthController@resetPassword');
     Route::get('user', 'Admin\AuthController@getAuthenticatedUser')->middleware('jwt.verify');
+    Route::get('getTotal', 'Admin\DashboardController@getTotal')->middleware('jwt.verify');
 
     /* Profile */
     Route::prefix('profiles')->group(function(){
@@ -51,6 +52,15 @@ Route::prefix('admin')->group(function(){
         Route::post('/', 'Admin\SliderController@create')->middleware('jwt.verify');
         Route::put('/{id}', 'Admin\SliderController@update')->middleware('jwt.verify');
         Route::delete('/{id}', 'Admin\SliderController@delete')->middleware('jwt.verify');
+    });
+
+    /* Galleries */
+    Route::prefix('galleries')->group(function(){
+        Route::get('/', 'Admin\GalleryController@index')->middleware('jwt.verify');
+        Route::get('/{id}', 'Admin\GalleryController@details')->middleware('jwt.verify');
+        Route::post('/', 'Admin\GalleryController@create')->middleware('jwt.verify');
+        Route::put('/{id}', 'Admin\GalleryController@update')->middleware('jwt.verify');
+        Route::delete('/{id}', 'Admin\GalleryController@delete')->middleware('jwt.verify');
     });
 
     /* Social Links */

@@ -48,7 +48,7 @@ export default {
             this.is_loading = true;
 
             //get results
-            axios.get('/api/dashboard/getTotal',{
+            axios.get('/api/admin/getTotal',{
                 params:{
                     table: this.table,
                     is_active: this.is_active,

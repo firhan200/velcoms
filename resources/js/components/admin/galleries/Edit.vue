@@ -8,32 +8,24 @@
         <form v-on:submit.prevent="submit">
             <div v-if="!this.is_loading">
                 <div class="form-group">
-                    <label>Icon</label>
+                    <label>Image Cover</label>
                     <div class="help">
-                        current icon
+                        current cover
                     </div>
-                    <ImagePreviewer :photo="this.icon_name" :path="'/images/social_links/'" size="large"/>
-                    <ImageUploader :id="'icon_name'" v-on:base64Result="handlePhotoChange"/>
+                    <ImagePreviewer :photo="this.image_cover_name" :path="'/images/galleries/'" size="large"/>
+                    <ImageUploader :id="'image_cover_name'" v-on:base64Result="handlePhotoChange"/>
                     <div class="help">
-                        <i class="fa fa-info-circle"></i> this photo will be icon image
+                        <i class="fa fa-info-circle"></i> this photo will be gallery image cover
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Name</label>
-                    <input v-model="name" type="text" class="form-control" placeholder="Name" maxlength="100" required/>
+                    <label>Title</label>
+                    <input v-model="title" type="text" class="form-control" placeholder="Title" maxlength="100" required/>
                 </div>
                 <div class="form-group">
-                    <label>Link</label>
-                    <input v-model="link" type="text" class="form-control" placeholder="Link" maxlength="200" required/>
+                    <label>Description</label>
+                    <textarea id="description" v-model="description" class="ckeditor form-control" placeholder="Description" maxlength="2000" required></textarea>
                 </div>
-                <div class="form-group">
-                    <label>Is Open New Tab</label>
-                    &nbsp;
-                    <toggle-button class="toggle-margin" :value="this.is_open_newtab" color="#82C7EB" :sync="true" :labels="true" @change="onOpenNewTabChange($event)"/>
-                    <div class="help">
-                        choose if icon or link click will open in new tab.
-                    </div>
-                </div>        
                 <div class="form-group">
                     <label>Is Active</label>
                     &nbsp;
@@ -72,11 +64,11 @@ export default {
     data(){
         return{
             //form data
-            icon_name: null,
-            new_icon_name: null,
-            name: '',
-            link: '',
-            is_open_newtab : true,
+            image_cover_name: null,
+            new_image_cover_name: null,
+            title: '',
+            description: '',
+            is_text_shown : true,
             is_active : '',
 
             //loader
@@ -89,7 +81,13 @@ export default {
         }
     },
     mounted(){
-        this.getDetail(this.id);
+        this.getDetail(this.id)
+        .then(() => {
+            //init CKEditor
+            CKEDITOR.replace(document.getElementsByClassName('ckeditor')[0]);
+            //set body
+            CKEDITOR.instances.description.setData(this.description);
+        });
 
         //init keyboard press
         this.keyboardPress();
@@ -101,11 +99,11 @@ export default {
         backToList(){
             this.$emit('backToList');
         },
-        onOpenNewTabChange(e){
-            this.is_open_newtab = e.value;
+        onTextShownChange(e){
+            this.is_text_shown = e.value;
         },
         handlePhotoChange(base64String){
-            this.new_icon_name = base64String;
+            this.new_image_cover_name = base64String;
         },
         setLoading(is_loading){
             let backBtn = document.getElementById('back_btn');
@@ -135,20 +133,19 @@ export default {
             }
         },
         populateDetail(detailObj){
-            this.icon_name = detailObj.icon_name;
-            this.name = detailObj.name;
-            this.link = detailObj.link;
-            this.is_open_newtab = detailObj.is_open_newtab===1 ? true : false;
+            this.image_cover_name = detailObj.image_cover_name;
+            this.title = detailObj.title;
+            this.description = detailObj.description;
             this.is_active = detailObj.is_active===1 ? true : false;
         },
-        getDetail(id){
+        async getDetail(id){
             //hide error
             this.showError(false);
             //show loading
             this.is_loading = true;
 
             //call API
-            axios.get('/api/admin/social_links/'+id,{
+            await axios.get('/api/admin/galleries/'+id,{
                 headers: userHelper.authenticationBearer().headers
             })
             .then(res => {
@@ -179,9 +176,12 @@ export default {
                 this.setLoading(false);
             })
         },
+        //input validation, 
         isValid(body){
             //init errors array
             let errors = [];
+
+            //start validating, put yur validation here
 
             //check if input is valid or not
             if(errors.length > 0){
@@ -200,17 +200,16 @@ export default {
 
             //post body
             let body = {
-                icon_name : this.new_icon_name,
-                name : this.name,
-                link : this.link,
-                is_open_newtab : this.is_open_newtab,
+                image_cover_name : this.new_image_cover_name,
+                title : this.title,
+                description : CKEDITOR.instances.description.getData(),
                 is_active : this.is_active,
             }
 
             //validation
-            if(this.isValid(body)){
+                if(this.isValid(body)){
                 //call API
-                axios.put('/api/admin/social_links/'+this.id, body, userHelper.authenticationBearer())
+                axios.put('/api/admin/galleries/'+this.id, body, userHelper.authenticationBearer())
                 .then(res => {
                     if(res.status===200){
                         //check if success
