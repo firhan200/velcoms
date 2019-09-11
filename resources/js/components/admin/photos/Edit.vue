@@ -1,41 +1,40 @@
 <template>
     <div class="box">
         <div class="page-title">
-            New
+            Edit
         </div>
         <ErrorMessage v-if="this.is_error" :message="this.error_message" :icon="this.error_icon"/>
+        <Loading align="center" v-if="this.is_loading"/>
         <form v-on:submit.prevent="submit">
-            <div class="form-group">
-                <label>Cover Photo</label>
-                <ImageUploader :id="'image_cover'" v-on:base64Result="handlePhotoChange"/>
-                <div class="help">
-                    <i class="fa fa-info-circle"></i> this photo will be article cover
+            <div v-if="!this.is_loading">
+                <div class="form-group">
+                    <label>Image Cover</label>
+                    <div class="help">
+                        current cover
+                    </div>
+                    <ImagePreviewer :photo="this.image_cover_name" :path="'/images/galleries/'" size="large"/>
+                    <ImageUploader :id="'image_cover_name'" v-on:base64Result="handlePhotoChange"/>
+                    <div class="help">
+                        <i class="fa fa-info-circle"></i> this photo will be gallery image cover
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label>Title</label>
-                <input v-model="title" type="text" class="form-control" placeholder="Title" maxlength="100" required/>
-            </div>
-            <div class="form-group">
-                <label>Slug</label>
-                <textarea v-model="slug" class="form-control" placeholder="Slug" maxlength="500" required></textarea>
-            </div>
-            <div class="form-group col-sm-4 p-0">
-                <label>Category</label>
-                <select v-if="!is_category_loading" class="form-control" v-model="article_category_id">
-                    <option :value="article_category.id" v-bind:key="article_category.id" v-for="article_category in this.article_categories">
-                        {{ article_category.name }}
-                    </option>
-                </select>
-                <Loading v-if="is_category_loading"/>
-            </div>
-            <div class="form-group">
-                <label>Body</label>
-                <textarea id="body" v-model="body" class="ckeditor form-control" placeholder="Body" maxlength="2000" required></textarea>
-            </div>
-            <div align="left">
-                <button id="back_btn" v-on:click="backToList()" type="button" class="btn btn-danger"><i class="fa fa-chevron-left"></i> Cancel</button>
-                <button type="submit" id="submit_btn" class="btn btn-default"><i class="fa fa-paper-plane"></i> Submit</button>
+                <div class="form-group">
+                    <label>Title</label>
+                    <input v-model="title" type="text" class="form-control" placeholder="Title" maxlength="100" required/>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="description" v-model="description" class="ckeditor form-control" placeholder="Description" maxlength="2000" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Is Active</label>
+                    &nbsp;
+                    <toggle-button class="toggle-margin" :value="this.is_active" color="#82C7EB" :sync="true" :labels="true" @change="onActiveChange($event)"/>
+                </div>
+                <div align="left">
+                    <button id="back_btn" v-on:click="backToList()" type="button" class="btn btn-danger"><i class="fa fa-chevron-left"></i> Cancel</button>
+                    <button type="submit" id="submit_btn" class="btn btn-default"><i class="fa fa-save"></i> Save</button>
+                </div>
             </div>
         </form> 
     </div>
@@ -50,28 +49,30 @@ import config from './../../../config';
 import Loading from './../../Loading.vue';
 import ErrorMessage from './../../styles/ErrorMessage.vue';
 import ImageUploader from './../../styles/ImageUploader.vue';
+import ImagePreviewer from './../../styles/ImagePreviewer.vue';
 
 export default {
     components : {
         Loading,
         ErrorMessage,
         ImageUploader,
+        ImagePreviewer,
     },
+    props : [
+        'id'
+    ],
     data(){
         return{
-            //DOM & Collections
-            article_categories : [],
-
             //form data
-            image_cover: null,
+            image_cover_name: null,
+            new_image_cover_name: null,
             title: '',
-            slug: '',
-            body: '',
-            article_category_id : null,
+            description: '',
+            is_text_shown : true,
+            is_active : '',
 
             //loader
             is_loading: false,
-            is_category_loading: false,
 
             //error
             is_error: false,
@@ -80,20 +81,29 @@ export default {
         }
     },
     mounted(){
-        //get article categories
-        this.getArticleCategories();
-
-        CKEDITOR.replace(document.getElementsByClassName('ckeditor')[0]);
+        this.getDetail(this.id)
+        .then(() => {
+            //init CKEditor
+            CKEDITOR.replace(document.getElementsByClassName('ckeditor')[0]);
+            //set body
+            CKEDITOR.instances.description.setData(this.description);
+        });
 
         //init keyboard press
         this.keyboardPress();
     },
     methods : {
+        onActiveChange(e){
+            this.is_active = e.value;
+        },
         backToList(){
             this.$emit('backToList');
         },
+        onTextShownChange(e){
+            this.is_text_shown = e.value;
+        },
         handlePhotoChange(base64String){
-            this.image_cover = base64String;
+            this.new_image_cover_name = base64String;
         },
         setLoading(is_loading){
             let backBtn = document.getElementById('back_btn');
@@ -122,32 +132,28 @@ export default {
                 this.error_icon = '';
             }
         },
-        getArticleCategories(){
-            //loading
-            this.is_category_loading = true;
+        populateDetail(detailObj){
+            this.image_cover_name = detailObj.image_cover_name;
+            this.title = detailObj.title;
+            this.description = detailObj.description;
+            this.is_active = detailObj.is_active===1 ? true : false;
+        },
+        async getDetail(id){
+            //hide error
+            this.showError(false);
+            //show loading
+            this.is_loading = true;
 
             //call API
-            axios.get('/api/admin/article_categories',{
-                params:{
-                    take: 999,
-                    keyword: '',
-                    page: 1,
-                    order_by: 'name',
-                    sort: 'asc'
-                },
+            await axios.get('/api/admin/galleries/'+id,{
                 headers: userHelper.authenticationBearer().headers
             })
             .then(res => {
                 if(res.status===200){
                     //check if success
-                    if(res.data.status !== 'undefined'){
-                        //success
-                        this.article_categories = res.data.results;
-
-                        //select first
-                        if(res.data.results.length > 0){
-                            this.article_category_id = res.data.results[0].id;
-                        }
+                    if(res.data.is_success){
+                        //success 
+                        this.populateDetail(res.data.data);
                     }else{
                         //failed to add
                         let message = (typeof res.data.status !=='undefined' ? res.data.status : res.data.message);
@@ -160,14 +166,14 @@ export default {
                 }
 
                 //hide loading
-                this.is_category_loading = false;
+                this.is_loading = false;
             })
             .catch(err => {
                 //error
                 this.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle');
 
                 //hide loading
-                this.is_category_loading = false;
+                this.setLoading(false);
             })
         },
         //input validation, 
@@ -194,24 +200,23 @@ export default {
 
             //post body
             let body = {
-                image_cover : this.image_cover,
+                image_cover_name : this.new_image_cover_name,
                 title : this.title,
-                slug : this.slug,
-                article_category_id : this.article_category_id,
-                body : CKEDITOR.instances.body.getData(),
+                description : CKEDITOR.instances.description.getData(),
+                is_active : this.is_active,
             }
 
             //validation
-            if(this.isValid(body)){
+                if(this.isValid(body)){
                 //call API
-                axios.post('/api/admin/articles', body, userHelper.authenticationBearer())
+                axios.put('/api/admin/galleries/'+this.id, body, userHelper.authenticationBearer())
                 .then(res => {
                     if(res.status===200){
                         //check if success
                         if(res.data.is_success){
                             //success add
                             this.$toast.open({
-                                message: 'Successfully add new data.',
+                                message: 'Successfully update data.',
                                 type: 'success',
                                 position: config.toast_position
                             });
@@ -263,4 +268,3 @@ export default {
     }
 }
 </script>
-

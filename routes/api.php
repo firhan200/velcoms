@@ -63,6 +63,15 @@ Route::prefix('admin')->group(function(){
         Route::delete('/{id}', 'Admin\GalleryController@delete')->middleware('jwt.verify');
     });
 
+    /* Photos */
+    Route::prefix('photos')->group(function(){
+        Route::get('/', 'Admin\PhotoController@index')->middleware('jwt.verify');
+        Route::get('/{id}', 'Admin\PhotoController@details')->middleware('jwt.verify');
+        Route::post('/', 'Admin\PhotoController@create')->middleware('jwt.verify');
+        Route::put('/{id}', 'Admin\PhotoController@update')->middleware('jwt.verify');
+        Route::delete('/{id}', 'Admin\PhotoController@delete')->middleware('jwt.verify');
+    });
+
     /* Social Links */
     Route::prefix('social_links')->group(function(){
         Route::get('/', 'Admin\SocialLinkController@index')->middleware('jwt.verify');

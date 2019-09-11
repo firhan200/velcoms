@@ -16,6 +16,8 @@ class CreatePhotosTable extends Migration
         Schema::create('photos', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('gallery_id');
+            $table->string('image_thumbnail_name');
+            $table->string('image_original_name');
             $table->string('title');
             $table->text('description')->default(null)->nullable(true);
             $table->boolean('is_active');

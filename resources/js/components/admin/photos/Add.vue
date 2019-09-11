@@ -4,34 +4,43 @@
             New
         </div>
         <ErrorMessage v-if="this.is_error" :message="this.error_message" :icon="this.error_icon"/>
-        <form v-on:submit.prevent="submit">
-            <div class="form-group">
-                <label>Cover Photo</label>
-                <ImageUploader :id="'image_cover'" v-on:base64Result="handlePhotoChange"/>
-                <div class="help">
-                    <i class="fa fa-info-circle"></i> this photo will be article cover
+        <form id="submit_form" v-on:submit.prevent="submit">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Image Thumbnail</label>
+                        <ImageUploader :id="'image_thumbnail_name'" v-on:base64Result="handleThumbnailPhotoChange"/>
+                        <div class="help">
+                            <i class="fa fa-info-circle"></i> this photo will be thumbnail preview image
+                        </div>
+                    </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Image Original</label>
+                        <ImageUploader :id="'image_original_name'" v-on:base64Result="handleOriginalPhotoChange"/>
+                        <div class="help">
+                            <i class="fa fa-info-circle"></i> this photo will be original image
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-sm-4 p-0">
+                <label>Gallery</label>
+                <select v-if="!is_gallery_loading" class="form-control" v-model="gallery_id">
+                    <option :value="gallery.id" v-bind:key="gallery.id" v-for="gallery in this.galleries">
+                        {{ gallery.title }}
+                    </option>
+                </select>
+                <Loading v-if="is_gallery_loading"/>
             </div>
             <div class="form-group">
                 <label>Title</label>
                 <input v-model="title" type="text" class="form-control" placeholder="Title" maxlength="100" required/>
             </div>
             <div class="form-group">
-                <label>Slug</label>
-                <textarea v-model="slug" class="form-control" placeholder="Slug" maxlength="500" required></textarea>
-            </div>
-            <div class="form-group col-sm-4 p-0">
-                <label>Category</label>
-                <select v-if="!is_category_loading" class="form-control" v-model="article_category_id">
-                    <option :value="article_category.id" v-bind:key="article_category.id" v-for="article_category in this.article_categories">
-                        {{ article_category.name }}
-                    </option>
-                </select>
-                <Loading v-if="is_category_loading"/>
-            </div>
-            <div class="form-group">
-                <label>Body</label>
-                <textarea id="body" v-model="body" class="ckeditor form-control" placeholder="Body" maxlength="2000" required></textarea>
+                <label>Description</label>
+                <textarea id="description" v-model="description" class="ckeditor form-control" placeholder="Description" maxlength="2000" required></textarea>
             </div>
             <div align="left">
                 <button id="back_btn" v-on:click="backToList()" type="button" class="btn btn-danger"><i class="fa fa-chevron-left"></i> Cancel</button>
@@ -59,19 +68,19 @@ export default {
     },
     data(){
         return{
-            //DOM & Collections
-            article_categories : [],
+            //collection
+            galleries : [],
 
             //form data
-            image_cover: null,
+            image_thumbnail_name: null,
+            image_original_name: null,
+            gallery_id: null,
             title: '',
-            slug: '',
-            body: '',
-            article_category_id : null,
+            description: '',
 
             //loader
             is_loading: false,
-            is_category_loading: false,
+            is_gallery_loading: false,
 
             //error
             is_error: false,
@@ -80,10 +89,10 @@ export default {
         }
     },
     mounted(){
-        //get article categories
-        this.getArticleCategories();
-
         CKEDITOR.replace(document.getElementsByClassName('ckeditor')[0]);
+
+        //init gallery
+        this.getGalleries();
 
         //init keyboard press
         this.keyboardPress();
@@ -92,8 +101,11 @@ export default {
         backToList(){
             this.$emit('backToList');
         },
-        handlePhotoChange(base64String){
-            this.image_cover = base64String;
+        handleThumbnailPhotoChange(base64String){
+            this.image_thumbnail_name = base64String;
+        },
+        handleOriginalPhotoChange(base64String){
+            this.image_original_name = base64String;
         },
         setLoading(is_loading){
             let backBtn = document.getElementById('back_btn');
@@ -122,17 +134,17 @@ export default {
                 this.error_icon = '';
             }
         },
-        getArticleCategories(){
+        getGalleries(){
             //loading
-            this.is_category_loading = true;
+            this.is_gallery_loading = true;
 
             //call API
-            axios.get('/api/admin/article_categories',{
+            axios.get('/api/admin/galleries',{
                 params:{
                     take: 999,
                     keyword: '',
                     page: 1,
-                    order_by: 'name',
+                    order_by: 'title',
                     sort: 'asc'
                 },
                 headers: userHelper.authenticationBearer().headers
@@ -142,11 +154,11 @@ export default {
                     //check if success
                     if(res.data.status !== 'undefined'){
                         //success
-                        this.article_categories = res.data.results;
+                        this.galleries = res.data.results;
 
                         //select first
                         if(res.data.results.length > 0){
-                            this.article_category_id = res.data.results[0].id;
+                            this.gallery_id = res.data.results[0].id;
                         }
                     }else{
                         //failed to add
@@ -160,22 +172,41 @@ export default {
                 }
 
                 //hide loading
-                this.is_category_loading = false;
+                this.is_gallery_loading = false;
             })
             .catch(err => {
                 //error
                 this.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle');
 
                 //hide loading
-                this.is_category_loading = false;
+                this.is_gallery_loading = false;
             })
         },
-        //input validation, 
         isValid(body){
             //init errors array
             let errors = [];
 
-            //start validating, put yur validation here
+            //check thumbnail
+            if(body.image_thumbnail_name===null || body.image_thumbnail_name===''){
+                errors.push(true);
+                //show toast
+                this.$toast.open({
+                    message: 'Thumbnail image cannot be empty.',
+                    type: 'error',
+                    position: config.toast_position
+                });
+            }
+
+            //check original
+            if(body.image_original_name===null || body.image_original_name===''){
+                errors.push(true);
+                //show toast
+                this.$toast.open({
+                    message: 'Original image cannot be empty.',
+                    type: 'error',
+                    position: config.toast_position
+                });
+            }
 
             //check if input is valid or not
             if(errors.length > 0){
@@ -194,17 +225,16 @@ export default {
 
             //post body
             let body = {
-                image_cover : this.image_cover,
+                image_thumbnail_name : this.image_thumbnail_name,
+                image_original_name : this.image_original_name,
                 title : this.title,
-                slug : this.slug,
-                article_category_id : this.article_category_id,
-                body : CKEDITOR.instances.body.getData(),
+                description : CKEDITOR.instances.description.getData(),
             }
 
             //validation
             if(this.isValid(body)){
                 //call API
-                axios.post('/api/admin/articles', body, userHelper.authenticationBearer())
+                axios.post('/api/admin/photos', body, userHelper.authenticationBearer())
                 .then(res => {
                     if(res.status===200){
                         //check if success
