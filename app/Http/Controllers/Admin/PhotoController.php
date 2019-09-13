@@ -28,6 +28,7 @@ class PhotoController extends BaseController
         
         try{
         	//init variabels & default value
+        	$gallery_id = 0;
         	$keyword = '';
         	$page = 1;
         	$skip = 0;
@@ -35,6 +36,12 @@ class PhotoController extends BaseController
             $total_page = 0;
             $order_by = 'id'; //default
             $sort = 'desc'; //default
+
+            //gallery id
+        	if($request->input('gallery_id')!=null){
+        		$gallery_id = $request->input('gallery_id');     		
+        	}
+            $this->data['gallery_id'] = $gallery_id;
 
             //take
         	if($request->input('take')!=null){
@@ -65,24 +72,41 @@ class PhotoController extends BaseController
             
         	//results get query
             $results = $this->model->
-            			where('is_deleted', 0)->
+            			where('photos.is_deleted', 0)->
             			where(function($query){
 			                $query->
-			                where('title', 'LIKE', "%".$this->data['keyword']."%")->
-			                orWhere('description', 'LIKE', "%".$this->data['keyword']."%");
+			                where('photos.title', 'LIKE', "%".$this->data['keyword']."%")->
+			                orWhere('photos.description', 'LIKE', "%".$this->data['keyword']."%")->
+			                orWhere('galleries.title', 'LIKE', "%".$this->data['keyword']."%");
                         })->
+                        where(function($query){
+                            if($this->data['gallery_id']!=0){
+                                $query->
+			                    where('photos.gallery_id', $this->data['gallery_id']);
+                            }
+                        })->
+                        leftJoin('galleries', 'photos.gallery_id', 'galleries.id')->
+                        select('photos.*', 'galleries.id AS gallery_id', 'galleries.title AS gallery_title')->
             			orderBy($order_by, $sort)->
             			skip($skip)->take($take)->
                         get();
                         
             //total results
             $total_results = $this->model->
-						where('is_deleted', 0)->
-            			where(function($query){
-			                $query->
-			                where('title', 'LIKE', "%".$this->data['keyword']."%")->
-			                orWhere('description', 'LIKE', "%".$this->data['keyword']."%");
+                        where('photos.is_deleted', 0)->
+                        where(function($query){
+                            $query->
+                            where('photos.title', 'LIKE', "%".$this->data['keyword']."%")->
+                            orWhere('photos.description', 'LIKE', "%".$this->data['keyword']."%")->
+                            orWhere('galleries.title', 'LIKE', "%".$this->data['keyword']."%");
                         })->
+                        where(function($query){
+                            if($this->data['gallery_id']!=0){
+                                $query->
+			                    where('photos.gallery_id', $this->data['gallery_id']);
+                            }
+                        })->
+                        leftJoin('galleries', 'photos.gallery_id', 'galleries.id')->
                         count();
                         
             //total page
@@ -166,7 +190,8 @@ class PhotoController extends BaseController
             //init model
             $model = $this->model;
 
-            $modelObj = $model::where('id', $id)->first();
+            $modelObj = $model::where('photos.id', $id)->leftJoin('galleries', 'photos.gallery_id', 'galleries.id')->
+            select('photos.*', 'galleries.id AS gallery_id', 'galleries.title AS gallery_title')->first();
             if($modelObj!=null){
                 if(!$modelObj->is_deleted){
                     $response['is_success'] = true;
@@ -198,19 +223,31 @@ class PhotoController extends BaseController
             $modelObj = $model::where('id', $id)->where('is_deleted', 0)->first();
             if($modelObj!=null){
                 //update
-                //check image
-                if($request->input('image_cover_name')!=null){
-                    $image_name = $this->_convertBase64Image($request->input('image_cover_name'));
+                //check thumbnail image
+                if($request->input('image_thumbnail_name')!=null){
+                    $image_thumbnail = $this->_convertBase64Image($request->input('image_thumbnail_name'));
                     //get filename
-                    $file_name = $image_name['name'];
+                    $thumbnail_name = $image_thumbnail['name'];
                     //save
-                    File::put($this->data['image_path'].$file_name, base64_decode($image_name['image']));
+                    File::put($this->data['image_path'].$thumbnail_name, base64_decode($image_thumbnail['image']));
                     //add to model obj
-                    $modelObj->image_cover_name = $file_name;
+                    $modelObj->image_thumbnail_name = $thumbnail_name;   
+                }
+
+                //check original image
+                if($request->input('image_original_name')!=null){
+                    $image_original = $this->_convertBase64Image($request->input('image_original_name'));
+                    //get filename
+                    $original_name = $image_original['name'];
+                    //save
+                    File::put($this->data['image_path'].$original_name, base64_decode($image_original['image']));
+                    //add to model obj
+                    $modelObj->image_original_name = $original_name;   
                 }
 
                 $modelObj->title = $request->title;
                 $modelObj->description = $request->description;
+                $modelObj->gallery_id = $request->gallery_id;
                 $modelObj->is_active = $request->is_active;
 
                 //save

@@ -7,16 +7,42 @@
         <Loading align="center" v-if="this.is_loading"/>
         <form v-on:submit.prevent="submit">
             <div v-if="!this.is_loading">
-                <div class="form-group">
-                    <label>Image Cover</label>
-                    <div class="help">
-                        current cover
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>Image Thumbnail</label>
+                            <div class="help">
+                                current thumbnail
+                            </div>
+                            <ImagePreviewer :photo="this.image_thumbnail_name" :path="'/images/photos/'" size="large"/>
+                            <ImageUploader :id="'image_thumbnail_name'" v-on:base64Result="handleThumbnailPhotoChange"/>
+                            <div class="help">
+                                <i class="fa fa-info-circle"></i> this photo will be thumbnail
+                            </div>
+                        </div>
                     </div>
-                    <ImagePreviewer :photo="this.image_cover_name" :path="'/images/galleries/'" size="large"/>
-                    <ImageUploader :id="'image_cover_name'" v-on:base64Result="handlePhotoChange"/>
-                    <div class="help">
-                        <i class="fa fa-info-circle"></i> this photo will be gallery image cover
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>Image Original</label>
+                            <div class="help">
+                                current original
+                            </div>
+                            <ImagePreviewer :photo="this.image_original_name" :path="'/images/photos/'" size="large"/>
+                            <ImageUploader :id="'image_original_name'" v-on:base64Result="handleOriginalPhotoChange"/>
+                            <div class="help">
+                                <i class="fa fa-info-circle"></i> this photo will be original
+                            </div>
+                        </div>
                     </div>
+                </div>
+                <div class="form-group col-sm-4 p-0">
+                    <label>Gallery</label>
+                    <select v-if="!is_gallery_loading" class="form-control" v-model="gallery_id">
+                        <option :value="gallery.id" v-bind:key="gallery.id" v-for="gallery in this.galleries">
+                            {{ gallery.title }}
+                        </option>
+                    </select>
+                    <Loading v-if="is_gallery_loading"/>
                 </div>
                 <div class="form-group">
                     <label>Title</label>
@@ -63,16 +89,23 @@ export default {
     ],
     data(){
         return{
+            //collection
+            galleries : [],
+
             //form data
-            image_cover_name: null,
-            new_image_cover_name: null,
+            image_thumbnail_name: null,
+            new_image_thumbnail_name: null,
+            image_original_name: null,
+            new_image_original_name: null,
             title: '',
             description: '',
+            gallery_id: 0,
             is_text_shown : true,
             is_active : '',
 
             //loader
             is_loading: false,
+            is_gallery_loading: false,
 
             //error
             is_error: false,
@@ -81,14 +114,15 @@ export default {
         }
     },
     mounted(){
-        this.getDetail(this.id)
-        .then(() => {
-            //init CKEditor
-            CKEDITOR.replace(document.getElementsByClassName('ckeditor')[0]);
-            //set body
-            CKEDITOR.instances.description.setData(this.description);
-        });
-
+        this.getGalleries().then(() => {
+            this.getDetail(this.id)
+            .then(() => {
+                //init CKEditor
+                CKEDITOR.replace(document.getElementsByClassName('ckeditor')[0]);
+                //set body
+                CKEDITOR.instances.description.setData(this.description);
+            });
+        })
         //init keyboard press
         this.keyboardPress();
     },
@@ -102,8 +136,11 @@ export default {
         onTextShownChange(e){
             this.is_text_shown = e.value;
         },
-        handlePhotoChange(base64String){
-            this.new_image_cover_name = base64String;
+        handleThumbnailPhotoChange(base64String){
+            this.new_image_thumbnail_name = base64String;
+        },
+        handleOriginalPhotoChange(base64String){
+            this.new_image_original_name = base64String;
         },
         setLoading(is_loading){
             let backBtn = document.getElementById('back_btn');
@@ -133,10 +170,60 @@ export default {
             }
         },
         populateDetail(detailObj){
-            this.image_cover_name = detailObj.image_cover_name;
+            this.image_thumbnail_name = detailObj.image_thumbnail_name;
+            this.image_original_name = detailObj.image_original_name;
             this.title = detailObj.title;
             this.description = detailObj.description;
+            this.gallery_id = detailObj.gallery_id;
             this.is_active = detailObj.is_active===1 ? true : false;
+        },
+        async getGalleries(){
+            //loading
+            this.is_gallery_loading = true;
+
+            //call API
+            await axios.get('/api/admin/galleries',{
+                params:{
+                    take: 999,
+                    keyword: '',
+                    page: 1,
+                    order_by: 'title',
+                    sort: 'asc'
+                },
+                headers: userHelper.authenticationBearer().headers
+            })
+            .then(res => {
+                if(res.status===200){
+                    //check if success
+                    if(res.data.status !== 'undefined'){
+                        //success
+                        this.galleries = res.data.results;
+
+                        //select first
+                        if(res.data.results.length > 0){
+                            this.gallery_id = res.data.results[0].id;
+                        }
+                    }else{
+                        //failed to add
+                        let message = (typeof res.data.status !=='undefined' ? res.data.status : res.data.message);
+                        this.showError(true, message, 'fa fa-info-circle');
+                    }
+                }
+                else{
+                    //error response
+                    this.showError(true, 'error code: '+res.status+' '+res.statusText, 'fa fa-info-circle');
+                }
+
+                //hide loading
+                this.is_gallery_loading = false;
+            })
+            .catch(err => {
+                //error
+                this.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle');
+
+                //hide loading
+                this.is_gallery_loading = false;
+            })
         },
         async getDetail(id){
             //hide error
@@ -145,7 +232,7 @@ export default {
             this.is_loading = true;
 
             //call API
-            await axios.get('/api/admin/galleries/'+id,{
+            await axios.get('/api/admin/photos/'+id,{
                 headers: userHelper.authenticationBearer().headers
             })
             .then(res => {
@@ -200,8 +287,10 @@ export default {
 
             //post body
             let body = {
-                image_cover_name : this.new_image_cover_name,
+                image_thumbnail_name : this.new_image_thumbnail_name,
+                image_original_name : this.new_image_original_name,
                 title : this.title,
+                gallery_id : this.gallery_id,
                 description : CKEDITOR.instances.description.getData(),
                 is_active : this.is_active,
             }
@@ -209,7 +298,7 @@ export default {
             //validation
                 if(this.isValid(body)){
                 //call API
-                axios.put('/api/admin/galleries/'+this.id, body, userHelper.authenticationBearer())
+                axios.put('/api/admin/photos/'+this.id, body, userHelper.authenticationBearer())
                 .then(res => {
                     if(res.status===200){
                         //check if success

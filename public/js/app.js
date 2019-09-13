@@ -6142,6 +6142,7 @@ __webpack_require__.r(__webpack_exports__);
       var body = {
         image_thumbnail_name: this.image_thumbnail_name,
         image_original_name: this.image_original_name,
+        gallery_id: this.gallery_id,
         title: this.title,
         description: CKEDITOR.instances.description.getData()
       }; //validation
@@ -6287,6 +6288,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //libs
 
  //components
@@ -6306,8 +6323,10 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       // detail
-      image_cover_name: '',
+      image_thumbnail_name: '',
+      image_original_name: '',
       title: '',
+      gallery_title: '',
       description: '',
       is_active: '',
       created_at: '',
@@ -6337,9 +6356,11 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     populateDetail: function populateDetail(detailObj) {
-      this.image_cover_name = detailObj.image_cover_name;
+      this.image_thumbnail_name = detailObj.image_thumbnail_name;
+      this.image_original_name = detailObj.image_original_name;
       this.title = detailObj.title;
       this.description = detailObj.description;
+      this.gallery_title = detailObj.gallery_title;
       this.is_active = detailObj.is_active === 1 ? true : false;
       this.created_at = detailObj.created_at;
       this.updated_at = detailObj.updated_at;
@@ -6352,7 +6373,7 @@ __webpack_require__.r(__webpack_exports__);
 
       this.is_loading = true; //call API
 
-      axios.get('/api/admin/galleries/' + id, {
+      axios.get('/api/admin/photos/' + id, {
         headers: _helpers_userHelper__WEBPACK_IMPORTED_MODULE_0__["default"].authenticationBearer().headers
       }).then(function (res) {
         if (res.status === 200) {
@@ -6454,6 +6475,32 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //libs
 
  //components
@@ -6472,15 +6519,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   props: ['id'],
   data: function data() {
     return {
+      //collection
+      galleries: [],
       //form data
-      image_cover_name: null,
-      new_image_cover_name: null,
+      image_thumbnail_name: null,
+      new_image_thumbnail_name: null,
+      image_original_name: null,
+      new_image_original_name: null,
       title: '',
       description: '',
+      gallery_id: 0,
       is_text_shown: true,
       is_active: '',
       //loader
       is_loading: false,
+      is_gallery_loading: false,
       //error
       is_error: false,
       error_message: '',
@@ -6490,11 +6543,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   mounted: function mounted() {
     var _this = this;
 
-    this.getDetail(this.id).then(function () {
-      //init CKEditor
-      CKEDITOR.replace(document.getElementsByClassName('ckeditor')[0]); //set body
+    this.getGalleries().then(function () {
+      _this.getDetail(_this.id).then(function () {
+        //init CKEditor
+        CKEDITOR.replace(document.getElementsByClassName('ckeditor')[0]); //set body
 
-      CKEDITOR.instances.description.setData(_this.description);
+        CKEDITOR.instances.description.setData(_this.description);
+      });
     }); //init keyboard press
 
     this.keyboardPress();
@@ -6509,8 +6564,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     onTextShownChange: function onTextShownChange(e) {
       this.is_text_shown = e.value;
     },
-    handlePhotoChange: function handlePhotoChange(base64String) {
-      this.new_image_cover_name = base64String;
+    handleThumbnailPhotoChange: function handleThumbnailPhotoChange(base64String) {
+      this.new_image_thumbnail_name = base64String;
+    },
+    handleOriginalPhotoChange: function handleOriginalPhotoChange(base64String) {
+      this.new_image_original_name = base64String;
     },
     setLoading: function setLoading(is_loading) {
       var backBtn = document.getElementById('back_btn');
@@ -6543,35 +6601,46 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     populateDetail: function populateDetail(detailObj) {
-      this.image_cover_name = detailObj.image_cover_name;
+      this.image_thumbnail_name = detailObj.image_thumbnail_name;
+      this.image_original_name = detailObj.image_original_name;
       this.title = detailObj.title;
       this.description = detailObj.description;
+      this.gallery_id = detailObj.gallery_id;
       this.is_active = detailObj.is_active === 1 ? true : false;
     },
-    getDetail: function () {
-      var _getDetail = _asyncToGenerator(
+    getGalleries: function () {
+      var _getGalleries = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(id) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
         var _this2 = this;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                //hide error
-                this.showError(false); //show loading
+                //loading
+                this.is_gallery_loading = true; //call API
 
-                this.is_loading = true; //call API
-
-                _context.next = 4;
-                return axios.get('/api/admin/galleries/' + id, {
+                _context.next = 3;
+                return axios.get('/api/admin/galleries', {
+                  params: {
+                    take: 999,
+                    keyword: '',
+                    page: 1,
+                    order_by: 'title',
+                    sort: 'asc'
+                  },
                   headers: _helpers_userHelper__WEBPACK_IMPORTED_MODULE_1__["default"].authenticationBearer().headers
                 }).then(function (res) {
                   if (res.status === 200) {
                     //check if success
-                    if (res.data.is_success) {
-                      //success 
-                      _this2.populateDetail(res.data.data);
+                    if (res.data.status !== 'undefined') {
+                      //success
+                      _this2.galleries = res.data.results; //select first
+
+                      if (res.data.results.length > 0) {
+                        _this2.gallery_id = res.data.results[0].id;
+                      }
                     } else {
                       //failed to add
                       var message = typeof res.data.status !== 'undefined' ? res.data.status : res.data.message;
@@ -6584,21 +6653,80 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   } //hide loading
 
 
-                  _this2.is_loading = false;
+                  _this2.is_gallery_loading = false;
                 })["catch"](function (err) {
                   //error
                   _this2.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle'); //hide loading
 
 
-                  _this2.setLoading(false);
+                  _this2.is_gallery_loading = false;
                 });
 
-              case 4:
+              case 3:
               case "end":
                 return _context.stop();
             }
           }
         }, _callee, this);
+      }));
+
+      function getGalleries() {
+        return _getGalleries.apply(this, arguments);
+      }
+
+      return getGalleries;
+    }(),
+    getDetail: function () {
+      var _getDetail = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(id) {
+        var _this3 = this;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                //hide error
+                this.showError(false); //show loading
+
+                this.is_loading = true; //call API
+
+                _context2.next = 4;
+                return axios.get('/api/admin/photos/' + id, {
+                  headers: _helpers_userHelper__WEBPACK_IMPORTED_MODULE_1__["default"].authenticationBearer().headers
+                }).then(function (res) {
+                  if (res.status === 200) {
+                    //check if success
+                    if (res.data.is_success) {
+                      //success 
+                      _this3.populateDetail(res.data.data);
+                    } else {
+                      //failed to add
+                      var message = typeof res.data.status !== 'undefined' ? res.data.status : res.data.message;
+
+                      _this3.showError(true, message, 'fa fa-info-circle');
+                    }
+                  } else {
+                    //error response
+                    _this3.showError(true, 'error code: ' + res.status + ' ' + res.statusText, 'fa fa-info-circle');
+                  } //hide loading
+
+
+                  _this3.is_loading = false;
+                })["catch"](function (err) {
+                  //error
+                  _this3.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle'); //hide loading
+
+
+                  _this3.setLoading(false);
+                });
+
+              case 4:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
       }));
 
       function getDetail(_x) {
@@ -6621,7 +6749,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     //submit form
     submit: function submit() {
-      var _this3 = this;
+      var _this4 = this;
 
       //hide error
       this.showError(false); //show loading
@@ -6629,46 +6757,48 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.setLoading(true); //post body
 
       var body = {
-        image_cover_name: this.new_image_cover_name,
+        image_thumbnail_name: this.new_image_thumbnail_name,
+        image_original_name: this.new_image_original_name,
         title: this.title,
+        gallery_id: this.gallery_id,
         description: CKEDITOR.instances.description.getData(),
         is_active: this.is_active
       }; //validation
 
       if (this.isValid(body)) {
         //call API
-        axios.put('/api/admin/galleries/' + this.id, body, _helpers_userHelper__WEBPACK_IMPORTED_MODULE_1__["default"].authenticationBearer()).then(function (res) {
+        axios.put('/api/admin/photos/' + this.id, body, _helpers_userHelper__WEBPACK_IMPORTED_MODULE_1__["default"].authenticationBearer()).then(function (res) {
           if (res.status === 200) {
             //check if success
             if (res.data.is_success) {
               //success add
-              _this3.$toast.open({
+              _this4.$toast.open({
                 message: 'Successfully update data.',
                 type: 'success',
                 position: _config__WEBPACK_IMPORTED_MODULE_2__["default"].toast_position
               }); //back to list and then refresh list
 
 
-              _this3.$emit('backToList', true);
+              _this4.$emit('backToList', true);
             } else {
               //failed to add
               var message = typeof res.data.status !== 'undefined' ? res.data.status : res.data.message;
 
-              _this3.showError(true, message, 'fa fa-info-circle');
+              _this4.showError(true, message, 'fa fa-info-circle');
             }
           } else {
             //error response
-            _this3.showError(true, 'error code: ' + res.status + ' ' + res.statusText, 'fa fa-info-circle');
+            _this4.showError(true, 'error code: ' + res.status + ' ' + res.statusText, 'fa fa-info-circle');
           } //hide loading
 
 
-          _this3.setLoading(false);
+          _this4.setLoading(false);
         })["catch"](function (err) {
           //error
-          _this3.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle'); //hide loading
+          _this4.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle'); //hide loading
 
 
-          _this3.setLoading(false);
+          _this4.setLoading(false);
         });
       } else {
         //hide error
@@ -6824,6 +6954,21 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //libs
 
  //components
@@ -6861,7 +7006,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       is_show_load_more: false,
       is_load_more_loading: false,
       is_loading: false,
+      is_gallery_loading: false,
       //list api params
+      gallery_id: null,
       take: 10,
       keyword: '',
       page: 1,
@@ -6873,8 +7020,17 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       error_message: 'status error',
       error_icon: 'fa fa-info-circle',
       //results
+      galleries: [],
       datas: []
     };
+  },
+  mounted: function mounted() {
+    //get available shown data
+    this.setAvailableShownData(); //get datas
+
+    this.getDatas(false); //get galleries
+
+    this.getGalleries();
   },
   methods: {
     //sorting
@@ -6971,6 +7127,18 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     search: function search() {
       this.getDatas(false);
     },
+    //on gallery filter change
+    onFilterByGalleryChange: function onFilterByGalleryChange(event) {
+      if (_config__WEBPACK_IMPORTED_MODULE_1__["default"].is_debug) {
+        console.log(event.target.value);
+      } //set take
+
+
+      this.gallery_id = event.target.value; //reset filter & load from first page
+
+      this.resetFilter();
+      this.getDatas(false);
+    },
     //on data per pagination change select event
     onShownDataPerPaginationChange: function onShownDataPerPaginationChange(event) {
       if (_config__WEBPACK_IMPORTED_MODULE_1__["default"].is_debug) {
@@ -7023,9 +7191,56 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         this.error_icon = '';
       }
     },
+    //get all galleries
+    getGalleries: function getGalleries() {
+      var _this2 = this;
+
+      //loading
+      this.is_gallery_loading = true; //call API
+
+      axios.get('/api/admin/galleries', {
+        params: {
+          take: 999,
+          keyword: '',
+          page: 1,
+          order_by: 'title',
+          sort: 'asc'
+        },
+        headers: _helpers_userHelper__WEBPACK_IMPORTED_MODULE_0__["default"].authenticationBearer().headers
+      }).then(function (res) {
+        if (res.status === 200) {
+          //check if success
+          if (res.data.status !== 'undefined') {
+            //success
+            var galleries = [{
+              id: null,
+              title: 'Show All'
+            }].concat(_toConsumableArray(res.data.results));
+            _this2.galleries = galleries;
+          } else {
+            //failed to add
+            var message = typeof res.data.status !== 'undefined' ? res.data.status : res.data.message;
+
+            _this2.showError(true, message, 'fa fa-info-circle');
+          }
+        } else {
+          //error response
+          _this2.showError(true, 'error code: ' + res.status + ' ' + res.statusText, 'fa fa-info-circle');
+        } //hide loading
+
+
+        _this2.is_gallery_loading = false;
+      })["catch"](function (err) {
+        //error
+        _this2.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle'); //hide loading
+
+
+        _this2.is_gallery_loading = false;
+      });
+    },
     //get list of data from API
     getDatas: function getDatas(is_load_more) {
-      var _this2 = this;
+      var _this3 = this;
 
       if (_config__WEBPACK_IMPORTED_MODULE_1__["default"].is_debug) {
         console.log("GET, take: " + this.take + ", keyword: " + this.keyword + ", page: " + this.page);
@@ -7043,6 +7258,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       axios.get('/api/admin/photos', {
         params: {
+          gallery_id: this.gallery_id,
           take: this.take,
           keyword: this.keyword,
           page: this.page,
@@ -7060,47 +7276,41 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
           if (typeof res.data.status !== 'undefined') {
             //there is an error, show error
-            _this2.showError(true, res.data.status, 'fa fa-info-circle');
+            _this3.showError(true, res.data.status, 'fa fa-info-circle');
           } else {
             //all is ok
             if (!is_load_more) {
-              _this2.datas = res.data.results;
-              _this2.total_data = res.data.total_results;
+              _this3.datas = res.data.results;
+              _this3.total_data = res.data.total_results;
             } else {
               //load more
-              _this2.datas = [].concat(_toConsumableArray(_this2.datas), _toConsumableArray(res.data.results));
+              _this3.datas = [].concat(_toConsumableArray(_this3.datas), _toConsumableArray(res.data.results));
             } //check show load more
 
 
-            _this2.checkShowLoadMore(res.data.page, res.data.total_page);
+            _this3.checkShowLoadMore(res.data.page, res.data.total_page);
           }
         } else {
           //error response
-          _this2.showError(true, 'error code: ' + res.status + ' ' + res.statusText, 'fa fa-info-circle');
+          _this3.showError(true, 'error code: ' + res.status + ' ' + res.statusText, 'fa fa-info-circle');
         } //hide loading
 
 
         if (!is_load_more) {
-          _this2.is_loading = false;
+          _this3.is_loading = false;
         } else {
-          _this2.is_load_more_loading = false;
+          _this3.is_load_more_loading = false;
         }
       })["catch"](function (err) {
         //error
         //hide loading
         if (!is_load_more) {
-          _this2.is_loading = false;
+          _this3.is_loading = false;
         } else {
-          _this2.is_load_more_loading = false;
+          _this3.is_load_more_loading = false;
         }
       });
     }
-  },
-  mounted: function mounted() {
-    //get available shown data
-    this.setAvailableShownData(); //get datas
-
-    this.getDatas(false);
   }
 });
 
@@ -47567,7 +47777,7 @@ var render = function() {
         ? _c("div", [
             _c("div", { staticClass: "row detail" }, [
               _c("div", { staticClass: "col-sm-2 label" }, [
-                _vm._v("\n                Image Cover\n            ")
+                _vm._v("\n                Image Thumbnail\n            ")
               ]),
               _vm._v(" "),
               _c(
@@ -47576,8 +47786,29 @@ var render = function() {
                 [
                   _c("ImagePreviewer", {
                     attrs: {
-                      photo: this.image_cover_name,
-                      path: "/images/galleries/",
+                      photo: this.image_thumbnail_name,
+                      path: "/images/photos/",
+                      size: "large"
+                    }
+                  })
+                ],
+                1
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row detail" }, [
+              _c("div", { staticClass: "col-sm-2 label" }, [
+                _vm._v("\n                Image Original\n            ")
+              ]),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "col-sm-10 body" },
+                [
+                  _c("ImagePreviewer", {
+                    attrs: {
+                      photo: this.image_original_name,
+                      path: "/images/photos/",
                       size: "large"
                     }
                   })
@@ -47608,6 +47839,20 @@ var render = function() {
                   staticClass: "html-content",
                   domProps: { innerHTML: _vm._s(this.description) }
                 })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row detail" }, [
+              _c("div", { staticClass: "col-sm-2 label" }, [
+                _vm._v("\n                Gallery\n            ")
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-sm-10 body" }, [
+                _vm._v(
+                  "\n                " +
+                    _vm._s(this.gallery_title) +
+                    "\n            "
+                )
               ])
             ]),
             _vm._v(" "),
@@ -47730,32 +47975,128 @@ var render = function() {
         [
           !this.is_loading
             ? _c("div", [
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col-sm-6" }, [
+                    _c(
+                      "div",
+                      { staticClass: "form-group" },
+                      [
+                        _c("label", [_vm._v("Image Thumbnail")]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "help" }, [
+                          _vm._v(
+                            "\n                            current thumbnail\n                        "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("ImagePreviewer", {
+                          attrs: {
+                            photo: this.image_thumbnail_name,
+                            path: "/images/photos/",
+                            size: "large"
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("ImageUploader", {
+                          attrs: { id: "image_thumbnail_name" },
+                          on: { base64Result: _vm.handleThumbnailPhotoChange }
+                        }),
+                        _vm._v(" "),
+                        _vm._m(0)
+                      ],
+                      1
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-sm-6" }, [
+                    _c(
+                      "div",
+                      { staticClass: "form-group" },
+                      [
+                        _c("label", [_vm._v("Image Original")]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "help" }, [
+                          _vm._v(
+                            "\n                            current original\n                        "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("ImagePreviewer", {
+                          attrs: {
+                            photo: this.image_original_name,
+                            path: "/images/photos/",
+                            size: "large"
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("ImageUploader", {
+                          attrs: { id: "image_original_name" },
+                          on: { base64Result: _vm.handleOriginalPhotoChange }
+                        }),
+                        _vm._v(" "),
+                        _vm._m(1)
+                      ],
+                      1
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
                 _c(
                   "div",
-                  { staticClass: "form-group" },
+                  { staticClass: "form-group col-sm-4 p-0" },
                   [
-                    _c("label", [_vm._v("Image Cover")]),
+                    _c("label", [_vm._v("Gallery")]),
                     _vm._v(" "),
-                    _c("div", { staticClass: "help" }, [
-                      _vm._v(
-                        "\n                    current cover\n                "
-                      )
-                    ]),
+                    !_vm.is_gallery_loading
+                      ? _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.gallery_id,
+                                expression: "gallery_id"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.gallery_id = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          _vm._l(this.galleries, function(gallery) {
+                            return _c(
+                              "option",
+                              {
+                                key: gallery.id,
+                                domProps: { value: gallery.id }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                        " +
+                                    _vm._s(gallery.title) +
+                                    "\n                    "
+                                )
+                              ]
+                            )
+                          }),
+                          0
+                        )
+                      : _vm._e(),
                     _vm._v(" "),
-                    _c("ImagePreviewer", {
-                      attrs: {
-                        photo: this.image_cover_name,
-                        path: "/images/galleries/",
-                        size: "large"
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c("ImageUploader", {
-                      attrs: { id: "image_cover_name" },
-                      on: { base64Result: _vm.handlePhotoChange }
-                    }),
-                    _vm._v(" "),
-                    _vm._m(0)
+                    _vm.is_gallery_loading ? _c("Loading") : _vm._e()
                   ],
                   1
                 ),
@@ -47864,7 +48205,7 @@ var render = function() {
                     ]
                   ),
                   _vm._v(" "),
-                  _vm._m(1)
+                  _vm._m(2)
                 ])
               ])
             : _vm._e()
@@ -47881,7 +48222,16 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "help" }, [
       _c("i", { staticClass: "fa fa-info-circle" }),
-      _vm._v(" this photo will be gallery image cover\n                ")
+      _vm._v(" this photo will be thumbnail\n                        ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "help" }, [
+      _c("i", { staticClass: "fa fa-info-circle" }),
+      _vm._v(" this photo will be original\n                        ")
     ])
   },
   function() {
@@ -47992,6 +48342,42 @@ var render = function() {
                         _vm._m(0)
                       ]),
                       _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "col-sm-3" },
+                        [
+                          !_vm.is_gallery_loading
+                            ? _c(
+                                "select",
+                                {
+                                  staticClass: "form-control",
+                                  on: {
+                                    change: function($event) {
+                                      return _vm.onFilterByGalleryChange($event)
+                                    }
+                                  }
+                                },
+                                _vm._l(this.galleries, function(gallery) {
+                                  return _c(
+                                    "option",
+                                    {
+                                      key: gallery.id,
+                                      domProps: { value: gallery.id }
+                                    },
+                                    [_vm._v(_vm._s(gallery.title))]
+                                  )
+                                }),
+                                0
+                              )
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _vm.is_gallery_loading ? _c("Loading") : _vm._e(),
+                          _vm._v(" "),
+                          _vm._m(1)
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
                       _c("div", { staticClass: "col-sm-9 col-md-7 col-lg-4" }, [
                         _c("div", { staticClass: "input-group mb-3" }, [
                           _c("input", {
@@ -48066,7 +48452,7 @@ var render = function() {
                         )
                       ]),
                       _vm._v(" "),
-                      _c("div", { staticClass: "no-pad col-sm-6" }, [
+                      _c("div", { staticClass: "no-pad col-sm-4" }, [
                         _c(
                           "span",
                           {
@@ -48084,6 +48470,12 @@ var render = function() {
                             _c("SortArrow", { attrs: { desc: this.desc } })
                           ],
                           1
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "no-pad col-sm-2" }, [
+                        _vm._v(
+                          "\n                            Gallery\n                        "
                         )
                       ]),
                       _vm._v(" "),
@@ -48141,8 +48533,8 @@ var render = function() {
                                   [
                                     _c("ImagePreviewer", {
                                       attrs: {
-                                        photo: data.image_cover_name,
-                                        path: "/images/galleries/",
+                                        photo: data.image_thumbnail_name,
+                                        path: "/images/photos/",
                                         size: "small"
                                       }
                                     })
@@ -48152,13 +48544,23 @@ var render = function() {
                                 _vm._v(" "),
                                 _c(
                                   "div",
-                                  { staticClass: "no-pad col-sm-6 m-center" },
+                                  { staticClass: "no-pad col-sm-4 m-center" },
                                   [
                                     _vm._v(
                                       "\n                            " +
                                         _vm._s(data.title) +
                                         "\n                        "
                                     )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "no-pad col-sm-2 m-center" },
+                                  [
+                                    _c("a", { staticClass: "link" }, [
+                                      _vm._v(_vm._s(data.gallery_title))
+                                    ])
                                   ]
                                 ),
                                 _vm._v(" "),
@@ -48271,6 +48673,15 @@ var staticRenderFns = [
     return _c("div", { staticClass: "help" }, [
       _c("i", { staticClass: "fa fa-info-circle" }),
       _vm._v(" data per pagination\n                            ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "help" }, [
+      _c("i", { staticClass: "fa fa-info-circle" }),
+      _vm._v(" Filter by gallery\n                            ")
     ])
   }
 ]

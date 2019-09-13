@@ -29,6 +29,15 @@
                                     <i class="fa fa-info-circle"></i> data per pagination
                                 </div>
                             </div>
+                            <div class="col-sm-3">
+                                <select v-on:change="onFilterByGalleryChange($event)" class="form-control" v-if="!is_gallery_loading">
+                                    <option v-bind:key="gallery.id" v-for="gallery in this.galleries" :value="gallery.id">{{ gallery.title }}</option>
+                                </select>
+                                <Loading v-if="is_gallery_loading"/>
+                                <div class="help">
+                                    <i class="fa fa-info-circle"></i> Filter by gallery
+                                </div>
+                            </div>
                             <div class="col-sm-9 col-md-7 col-lg-4">
                                 <div class="input-group mb-3">
                                     <input v-model="keyword" type="text" class="form-control" placeholder="Search..." aria-label="Search" aria-describedby="basic-addon2">
@@ -49,11 +58,14 @@
                             <div class="no-pad col-sm-2">
                                 Image
                             </div>
-                            <div class="no-pad col-sm-6">
+                            <div class="no-pad col-sm-4">
                                 <span class="link" v-on:click="sortBy('title')">
                                     Title
                                     <SortArrow :desc="this.desc"/>
                                 </span>
+                            </div>
+                            <div class="no-pad col-sm-2">
+                                Gallery
                             </div>
                             <div class="no-pad col-sm-2">
                                 <span class="link" v-on:click="sortBy('is_active')">
@@ -72,10 +84,13 @@
                     <div class="body" v-if="!this.is_loading">
                         <div v-bind:key="data.id" v-for="data in this.datas" class="row">
                             <div class="no-pad col-sm-2 m-center">
-                                <ImagePreviewer :photo="data.image_cover_name" path="/images/galleries/" size="small"/>
+                                <ImagePreviewer :photo="data.image_thumbnail_name" path="/images/photos/" size="small"/>
                             </div>
-                            <div class="no-pad col-sm-6 m-center">
+                            <div class="no-pad col-sm-4 m-center">
                                 {{ data.title }}
+                            </div>
+                            <div class="no-pad col-sm-2 m-center">
+                                <a class="link">{{ data.gallery_title }}</a>
                             </div>
                             <div class="no-pad col-sm-2 m-center">
                                 <IsActiveDisplay :is_active="data.is_active"/>
@@ -140,8 +155,10 @@ export default {
             is_show_load_more : false,
             is_load_more_loading : false,
             is_loading : false,
+            is_gallery_loading : false,
 
             //list api params
+            gallery_id : null,
             take : 10,
             keyword : '',
             page : 1,
@@ -155,8 +172,19 @@ export default {
             error_icon : 'fa fa-info-circle',
 
             //results
+            galleries : [],
             datas : []
         }
+    },
+    mounted(){
+        //get available shown data
+        this.setAvailableShownData();
+
+        //get datas
+        this.getDatas(false);
+
+        //get galleries
+        this.getGalleries();
     },
     methods: {
         //sorting
@@ -250,6 +278,20 @@ export default {
             this.getDatas(false);
         },
 
+        //on gallery filter change
+        onFilterByGalleryChange(event){
+            if(config.is_debug){
+                console.log(event.target.value);
+            }
+
+            //set take
+            this.gallery_id = event.target.value;
+
+            //reset filter & load from first page
+            this.resetFilter();
+            this.getDatas(false);
+        },
+
         //on data per pagination change select event
         onShownDataPerPaginationChange(event){
             if(config.is_debug){
@@ -311,6 +353,52 @@ export default {
             }
         },
 
+        //get all galleries
+        getGalleries(){
+            //loading
+            this.is_gallery_loading = true;
+
+            //call API
+            axios.get('/api/admin/galleries',{
+                params:{
+                    take: 999,
+                    keyword: '',
+                    page: 1,
+                    order_by: 'title',
+                    sort: 'asc'
+                },
+                headers: userHelper.authenticationBearer().headers
+            })
+            .then(res => {
+                if(res.status===200){
+                    //check if success
+                    if(res.data.status !== 'undefined'){
+                        //success
+                        let galleries = [{ id : null, title: 'Show All' }, ...res.data.results]
+                        this.galleries = galleries;
+                    }else{
+                        //failed to add
+                        let message = (typeof res.data.status !=='undefined' ? res.data.status : res.data.message);
+                        this.showError(true, message, 'fa fa-info-circle');
+                    }
+                }
+                else{
+                    //error response
+                    this.showError(true, 'error code: '+res.status+' '+res.statusText, 'fa fa-info-circle');
+                }
+
+                //hide loading
+                this.is_gallery_loading = false;
+            })
+            .catch(err => {
+                //error
+                this.showError(true, 'something wrong :( please contact administrator.', 'fa fa-info-circle');
+
+                //hide loading
+                this.is_gallery_loading = false;
+            })
+        },
+
         //get list of data from API
         getDatas(is_load_more){
             if(config.is_debug){
@@ -330,6 +418,7 @@ export default {
             //get users
             axios.get('/api/admin/photos',{
                 params:{
+                    gallery_id: this.gallery_id,
                     take: this.take,
                     keyword: this.keyword,
                     page: this.page,
@@ -385,13 +474,6 @@ export default {
                 }
             });
         }
-    },
-    mounted(){
-        //get available shown data
-        this.setAvailableShownData();
-
-        //get datas
-        this.getDatas(false);
     }
 }
 </script>

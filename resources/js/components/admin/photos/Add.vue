@@ -227,6 +227,7 @@ export default {
             let body = {
                 image_thumbnail_name : this.image_thumbnail_name,
                 image_original_name : this.image_original_name,
+                gallery_id : this.gallery_id,
                 title : this.title,
                 description : CKEDITOR.instances.description.getData(),
             }
