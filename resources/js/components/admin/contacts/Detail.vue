@@ -1,50 +1,33 @@
 <template>
     <div class="box">
         <div class="page-title">
-            Photo Details
+            Contact Details
         </div>
         <ErrorMessage v-if="this.is_error" :message="this.error_message" :icon="this.error_icon"/>
         <Loading align="center" v-if="this.is_loading"/>
         <div v-if="!this.is_loading && !this.is_error">
             <div class="row detail">
                 <div class="col-sm-2 label">
-                    Image Thumbnail
+                    Name
                 </div>
                 <div class="col-sm-10 body">
-                    <ImagePreviewer :photo="this.image_thumbnail_name" path="/images/photos/" size="large"/>
+                    {{ this.name }}
                 </div>
             </div>
             <div class="row detail">
                 <div class="col-sm-2 label">
-                    Image Original
+                    Email
                 </div>
                 <div class="col-sm-10 body">
-                    <ImagePreviewer :photo="this.image_original_name" path="/images/photos/" size="large"/>
+                    {{ this.email }}
                 </div>
             </div>
             <div class="row detail">
                 <div class="col-sm-2 label">
-                    Title
+                    Message
                 </div>
                 <div class="col-sm-10 body">
-                    {{ this.title }}
-                </div>
-            </div>
-            <div class="row detail">
-                <div class="col-sm-2 label">
-                    Description
-                </div>
-                <div class="col-sm-10 body">
-                    <div class="html-content" v-html="this.description">
-                    </div>
-                </div>
-            </div>
-            <div class="row detail">
-                <div class="col-sm-2 label">
-                    Gallery
-                </div>
-                <div class="col-sm-10 body">
-                    {{ this.gallery_title }}
+                    {{ this.message }}
                 </div>
             </div>
             <div class="row detail">
@@ -87,14 +70,12 @@ import config from './../../../config';
 import Loading from './../../Loading.vue';
 import ErrorMessage from './../../styles/ErrorMessage.vue';
 import IsActiveDisplay from './../../styles/IsActiveDisplay.vue';
-import ImagePreviewer from './../../styles/ImagePreviewer.vue';
 
 export default {
     components : {
         Loading,
         ErrorMessage,
-        IsActiveDisplay,
-        ImagePreviewer,
+        IsActiveDisplay
     },
     props : [
         'id'
@@ -102,11 +83,9 @@ export default {
     data(){
         return {
             // detail
-            image_thumbnail_name : '',
-            image_original_name : '',
-            title : '',
-            gallery_title : '',
-            description : '',
+            name : '',
+            email : '',
+            message : '',
             is_active : '',
             created_at : '',
             updated_at : '',
@@ -137,11 +116,9 @@ export default {
             }
         },
         populateDetail(detailObj){
-            this.image_thumbnail_name = detailObj.image_thumbnail_name;
-            this.image_original_name = detailObj.image_original_name;
-            this.title = detailObj.title;
-            this.description = detailObj.description;
-            this.gallery_title = detailObj.gallery_title;
+            this.name = detailObj.name;
+            this.email = detailObj.email;
+            this.message = detailObj.message;
             this.is_active = detailObj.is_active===1 ? true : false;
             this.created_at = detailObj.created_at;
             this.updated_at = detailObj.updated_at;
@@ -153,7 +130,7 @@ export default {
             this.is_loading = true;
 
             //call API
-            axios.get('/api/admin/photos/'+id,{
+            axios.get('/api/admin/contacts/'+id,{
                 headers: userHelper.authenticationBearer().headers
             })
             .then(res => {

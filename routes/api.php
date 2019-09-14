@@ -80,4 +80,11 @@ Route::prefix('admin')->group(function(){
         Route::put('/{id}', 'Admin\SocialLinkController@update')->middleware('jwt.verify');
         Route::delete('/{id}', 'Admin\SocialLinkController@delete')->middleware('jwt.verify');
     });
+
+    /* Contacts */
+    Route::prefix('contacts')->group(function(){
+        Route::get('/', 'Admin\ContactController@index')->middleware('jwt.verify');
+        Route::get('/{id}', 'Admin\ContactController@details')->middleware('jwt.verify');
+        Route::delete('/{id}', 'Admin\ContactController@delete')->middleware('jwt.verify');
+    });
 });

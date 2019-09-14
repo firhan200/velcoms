@@ -22,6 +22,7 @@ import AdminSliders from './components/admin/sliders/List';
 import AdminGalleries from './components/admin/galleries/List';
 import AdminPhotos from './components/admin/photos/List';
 import AdminSocialLinks from './components/admin/social_links/List';
+import AdminContacts from './components/admin/contacts/List';
 
 //use router
 Vue.use(VueRouter);
@@ -82,6 +83,10 @@ const router = new VueRouter({
                 {
                     path: 'social_links',
                     component : AdminSocialLinks
+                },
+                {
+                    path: 'contacts',
+                    component : AdminContacts
                 },
             ]
         }

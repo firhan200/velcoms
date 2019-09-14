@@ -1,7 +1,7 @@
 <template>
     <div class="box">
         <div class="page-title">
-            Edit
+            Edit Photo
         </div>
         <ErrorMessage v-if="this.is_error" :message="this.error_message" :icon="this.error_icon"/>
         <Loading align="center" v-if="this.is_loading"/>

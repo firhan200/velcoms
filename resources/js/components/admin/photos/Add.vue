@@ -1,7 +1,7 @@
 <template>
     <div class="box">
         <div class="page-title">
-            New
+            New Photo
         </div>
         <ErrorMessage v-if="this.is_error" :message="this.error_message" :icon="this.error_icon"/>
         <form id="submit_form" v-on:submit.prevent="submit">
@@ -32,6 +32,11 @@
                         {{ gallery.title }}
                     </option>
                 </select>
+                <div class="help" v-if="galleries.length < 1">
+                    <router-link to="/cms/galleries?show=add">
+                        <i class="fa fa-info-circle"></i> Please create gallery/album first.
+                    </router-link>
+                </div>
                 <Loading v-if="is_gallery_loading"/>
             </div>
             <div class="form-group">
@@ -203,6 +208,17 @@ export default {
                 //show toast
                 this.$toast.open({
                     message: 'Original image cannot be empty.',
+                    type: 'error',
+                    position: config.toast_position
+                });
+            }
+
+            //check gallery
+            if(body.gallery_id===null || body.gallery_id==='' || body.gallery_id===0){
+                errors.push(true);
+                //show toast
+                this.$toast.open({
+                    message: 'Please choose gallery',
                     type: 'error',
                     position: config.toast_position
                 });

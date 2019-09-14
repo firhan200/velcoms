@@ -1,7 +1,7 @@
 <template>
     <div class="box">
         <div class="page-title">
-            New
+            New Article
         </div>
         <ErrorMessage v-if="this.is_error" :message="this.error_message" :icon="this.error_icon"/>
         <form v-on:submit.prevent="submit">
@@ -22,11 +22,16 @@
             </div>
             <div class="form-group col-sm-4 p-0">
                 <label>Category</label>
-                <select v-if="!is_category_loading" class="form-control" v-model="article_category_id">
+                <select v-if="!is_category_loading" class="form-control" v-model="article_category_id" required>
                     <option :value="article_category.id" v-bind:key="article_category.id" v-for="article_category in this.article_categories">
                         {{ article_category.name }}
                     </option>
                 </select>
+                <div class="help" v-if="article_categories.length < 1">
+                    <router-link to="/cms/article_categories?show=add">
+                        <i class="fa fa-info-circle"></i> Please create article category first.
+                    </router-link>
+                </div>
                 <Loading v-if="is_category_loading"/>
             </div>
             <div class="form-group">
@@ -88,7 +93,7 @@ export default {
         //init keyboard press
         this.keyboardPress();
     },
-    methods : {
+    methods : { 
         backToList(){
             this.$emit('backToList');
         },
@@ -176,6 +181,25 @@ export default {
             let errors = [];
 
             //start validating, put yur validation here
+            if(body.body===null || body.body===''){
+                errors.push(true);
+                //show toast
+                this.$toast.open({
+                    message: 'Body cannot be empty.',
+                    type: 'error',
+                    position: config.toast_position
+                });
+            }
+
+            if(body.article_category_id===null || body.article_category_id===''){
+                errors.push(true);
+                //show toast
+                this.$toast.open({
+                    message: 'Please choose category.',
+                    type: 'error',
+                    position: config.toast_position
+                });
+            }
 
             //check if input is valid or not
             if(errors.length > 0){

@@ -1,7 +1,7 @@
 <template>
     <div class="box">
         <div class="page-title">
-            New
+            New Social Link
         </div>
         <ErrorMessage v-if="this.is_error" :message="this.error_message" :icon="this.error_icon"/>
         <form id="submit_form" v-on:submit.prevent="submit">

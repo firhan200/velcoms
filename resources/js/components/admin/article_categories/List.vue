@@ -385,7 +385,29 @@ export default {
                     this.is_load_more_loading = false;
                 }
             });
-        }
+        },
+
+        //show=add to dislay add, show=edit&id=1 to display edit
+        showComponentByQueryString(){
+            //check which component to show
+            if(typeof this.$route.query.show !== 'undefined'){
+                //query params show exist
+                if(this.$route.query.show.toLowerCase()=='add'){
+                    //add
+                    this.showAddComponent();
+                }else if(this.$route.query.show.toLowerCase()=='edit'){
+                    //edit, get id from query params
+                    if(typeof this.$route.query.id !== 'undefined'){
+                        this.showEdit(this.$route.query.id);
+                    }
+                }else if(this.$route.query.show.toLowerCase()=='detail'){
+                    //edit, get id from query params
+                    if(typeof this.$route.query.id !== 'undefined'){
+                        this.showDetail(this.$route.query.id);
+                    }
+                }
+            }
+        },
     },
     mounted(){
         //get available shown data
@@ -393,6 +415,9 @@ export default {
 
         //get datas
         this.getDatas(false);
+
+        //init query params display component
+        this.showComponentByQueryString();
     }
 }
 </script>
