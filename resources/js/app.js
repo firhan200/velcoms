@@ -26,6 +26,8 @@ Vue.use(VueToast);
 Vue.use(ToggleButton);
 //init image uploader
 Vue.use(ImageUploader);
+//init vue moment
+Vue.use(require('vue-moment'));
 
 //create Vue App
 new Vue({

@@ -12,6 +12,7 @@ export default {
             name: '',
             email: ''
         },
+        total_notifications : 0,
         token : '',
     },
     mutations:{
@@ -24,6 +25,12 @@ export default {
         },
         setToken(state, token){
             state.token = token;
+        },
+        setTotalNotifications(state, payload){
+            if(config.is_debug){
+                console.log("setTotalNotifications: "+payload);
+            }
+            state.total_notifications = payload;
         },
         clearAll(state){
             state.user = {
@@ -39,7 +46,10 @@ export default {
         },
         getUser: (state) => {
             return state.user;
-        }
+        },
+        getTotalNotifications: (state) => {
+            return state.total_notifications;
+        },
     },
     actions:{
         //login method
@@ -153,6 +163,41 @@ export default {
                 //set token
                 context.commit('setToken', token);
             }
+        },
+
+        getNotifications : (context) => {
+            //get total notification
+            axios.get('/api/admin/notifications/total',{
+                headers: userHelper.authenticationBearer().headers
+            })
+            .then(res => {
+                //check response
+                if(res.status===200){
+                    if(config.is_debug){
+                        console.log(res);
+                    }
+
+                    //check if res is valid
+                    if(typeof res.data.status!=='undefined'){
+                        //there is an error, show error
+                        if(config.is_debug){
+                            console.log(res.data.status);
+                        }
+                    }else{
+                        //all is ok
+                        context.commit('setTotalNotifications', res.data.total);
+                    }
+                }
+                else{
+                    //error response
+                    if(config.is_debug){
+                        console.log(res.status+": "+res.statusText);
+                    }
+                }
+            })
+            .catch(err => {
+                //error
+            });
         },
 
         logout : (context) => {

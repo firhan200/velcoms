@@ -13,7 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        //register admin notification
+        $this->app->bind('adminnotification',function(){
+            return new \App\Services\AdminNotification();
+        });
     }
 
     /**

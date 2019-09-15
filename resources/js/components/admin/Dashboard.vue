@@ -25,8 +25,6 @@ import userTypes from './../../constants/userTypes.js';
 
 export default {
     mounted(){
-        this.initProductHelpText();
-        this.renderSalesChart();
     },
     components: {
         DashboardTotal

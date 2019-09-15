@@ -33,6 +33,9 @@ export default {
                 }
             }
         });
+
+        //get total notification
+        this.$store.dispatch('getNotifications');
     }
 }
 </script>

@@ -11,6 +11,7 @@
 |
 */
 
+/* Admin Vue App */
 Route::get('/admin', function () {
     return view('admin.app');
 });

@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
+//post contact
+Route::post('contacts', 'ContactController@create');
+
 Route::prefix('admin')->group(function(){
     Route::post('login', 'Admin\AuthController@login');
     Route::post('forgot-password', 'Admin\AuthController@forgotPassword');
@@ -86,5 +89,12 @@ Route::prefix('admin')->group(function(){
         Route::get('/', 'Admin\ContactController@index')->middleware('jwt.verify');
         Route::get('/{id}', 'Admin\ContactController@details')->middleware('jwt.verify');
         Route::delete('/{id}', 'Admin\ContactController@delete')->middleware('jwt.verify');
+    });
+
+    /* Notifications */
+    Route::prefix('notifications')->group(function(){
+        Route::get('/total', 'Admin\NotificationController@total')->middleware('jwt.verify');
+        Route::get('/', 'Admin\NotificationController@index')->middleware('jwt.verify');
+        Route::delete('/{id}', 'Admin\NotificationController@delete')->middleware('jwt.verify');
     });
 });
