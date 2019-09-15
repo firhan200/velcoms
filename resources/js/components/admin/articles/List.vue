@@ -22,7 +22,7 @@
                     <div class="container-fluid p-0">
                         <div class="row">
                             <div class="col-sm-2">
-                                <select v-on:change="onShownDataPerPaginationChange($event)" class="form-control">
+                                <select v-model="take" v-on:change="onShownDataPerPaginationChange($event)" class="form-control">
                                     <option v-bind:key="shown" v-for="shown in this.available_shown_data" :value="shown">{{ shown }}</option>
                                 </select>
                                 <div class="help">

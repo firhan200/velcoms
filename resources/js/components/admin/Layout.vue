@@ -119,7 +119,9 @@
             <!-- sidebar-wrapper  -->
             <main class="page-content">
                 <div class="container">
-                    <router-view></router-view>
+                    <transition name="slide-fade">
+                        <router-view></router-view>
+                    </transition>
                 </div>
             </main>
             <!-- page-content" -->

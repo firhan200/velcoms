@@ -22,7 +22,7 @@
                     <div class="container-fluid p-0">
                         <div class="row">
                             <div class="col-sm-2">
-                                <select v-on:change="onShownDataPerPaginationChange($event)" class="form-control">
+                                <select v-on:change="onShownDataPerPaginationChange($event)" v-model="take" class="form-control">
                                     <option v-bind:key="shown" v-for="shown in this.available_shown_data" :value="shown">{{ shown }}</option>
                                 </select>
                                 <div class="help">
@@ -30,7 +30,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-3">
-                                <select v-on:change="onFilterByGalleryChange($event)" class="form-control" v-if="!is_gallery_loading">
+                                <select v-on:change="onFilterByGalleryChange($event)" v-model="gallery_id" class="form-control" v-if="!is_gallery_loading">
                                     <option v-bind:key="gallery.id" v-for="gallery in this.galleries" :value="gallery.id">{{ gallery.title }}</option>
                                 </select>
                                 <Loading v-if="is_gallery_loading"/>

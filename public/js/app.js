@@ -2487,6 +2487,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 //libs
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -45812,7 +45814,19 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("main", { staticClass: "page-content" }, [
-        _c("div", { staticClass: "container" }, [_c("router-view")], 1)
+        _c(
+          "div",
+          { staticClass: "container" },
+          [
+            _c(
+              "transition",
+              { attrs: { name: "slide-fade" } },
+              [_c("router-view")],
+              1
+            )
+          ],
+          1
+        )
       ])
     ])
   ])
@@ -46440,13 +46454,37 @@ var render = function() {
                         _c(
                           "select",
                           {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.take,
+                                expression: "take"
+                              }
+                            ],
                             staticClass: "form-control",
                             on: {
-                              change: function($event) {
-                                return _vm.onShownDataPerPaginationChange(
-                                  $event
-                                )
-                              }
+                              change: [
+                                function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.take = $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                },
+                                function($event) {
+                                  return _vm.onShownDataPerPaginationChange(
+                                    $event
+                                  )
+                                }
+                              ]
                             }
                           },
                           _vm._l(this.available_shown_data, function(shown) {
@@ -47603,13 +47641,37 @@ var render = function() {
                         _c(
                           "select",
                           {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.take,
+                                expression: "take"
+                              }
+                            ],
                             staticClass: "form-control",
                             on: {
-                              change: function($event) {
-                                return _vm.onShownDataPerPaginationChange(
-                                  $event
-                                )
-                              }
+                              change: [
+                                function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.take = $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                },
+                                function($event) {
+                                  return _vm.onShownDataPerPaginationChange(
+                                    $event
+                                  )
+                                }
+                              ]
                             }
                           },
                           _vm._l(this.available_shown_data, function(shown) {
@@ -48193,13 +48255,37 @@ var render = function() {
                         _c(
                           "select",
                           {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.take,
+                                expression: "take"
+                              }
+                            ],
                             staticClass: "form-control",
                             on: {
-                              change: function($event) {
-                                return _vm.onShownDataPerPaginationChange(
-                                  $event
-                                )
-                              }
+                              change: [
+                                function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.take = $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                },
+                                function($event) {
+                                  return _vm.onShownDataPerPaginationChange(
+                                    $event
+                                  )
+                                }
+                              ]
                             }
                           },
                           _vm._l(this.available_shown_data, function(shown) {
@@ -49087,13 +49173,37 @@ var render = function() {
                         _c(
                           "select",
                           {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.take,
+                                expression: "take"
+                              }
+                            ],
                             staticClass: "form-control",
                             on: {
-                              change: function($event) {
-                                return _vm.onShownDataPerPaginationChange(
-                                  $event
-                                )
-                              }
+                              change: [
+                                function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.take = $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                },
+                                function($event) {
+                                  return _vm.onShownDataPerPaginationChange(
+                                    $event
+                                  )
+                                }
+                              ]
                             }
                           },
                           _vm._l(this.available_shown_data, function(shown) {
@@ -49596,13 +49706,37 @@ var render = function() {
                         _c(
                           "select",
                           {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.take,
+                                expression: "take"
+                              }
+                            ],
                             staticClass: "form-control",
                             on: {
-                              change: function($event) {
-                                return _vm.onShownDataPerPaginationChange(
-                                  $event
-                                )
-                              }
+                              change: [
+                                function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.take = $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                },
+                                function($event) {
+                                  return _vm.onShownDataPerPaginationChange(
+                                    $event
+                                  )
+                                }
+                              ]
                             }
                           },
                           _vm._l(this.available_shown_data, function(shown) {
@@ -50699,13 +50833,37 @@ var render = function() {
                         _c(
                           "select",
                           {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.take,
+                                expression: "take"
+                              }
+                            ],
                             staticClass: "form-control",
                             on: {
-                              change: function($event) {
-                                return _vm.onShownDataPerPaginationChange(
-                                  $event
-                                )
-                              }
+                              change: [
+                                function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.take = $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                },
+                                function($event) {
+                                  return _vm.onShownDataPerPaginationChange(
+                                    $event
+                                  )
+                                }
+                              ]
                             }
                           },
                           _vm._l(this.available_shown_data, function(shown) {
@@ -50729,11 +50887,39 @@ var render = function() {
                             ? _c(
                                 "select",
                                 {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.gallery_id,
+                                      expression: "gallery_id"
+                                    }
+                                  ],
                                   staticClass: "form-control",
                                   on: {
-                                    change: function($event) {
-                                      return _vm.onFilterByGalleryChange($event)
-                                    }
+                                    change: [
+                                      function($event) {
+                                        var $$selectedVal = Array.prototype.filter
+                                          .call($event.target.options, function(
+                                            o
+                                          ) {
+                                            return o.selected
+                                          })
+                                          .map(function(o) {
+                                            var val =
+                                              "_value" in o ? o._value : o.value
+                                            return val
+                                          })
+                                        _vm.gallery_id = $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
+                                      },
+                                      function($event) {
+                                        return _vm.onFilterByGalleryChange(
+                                          $event
+                                        )
+                                      }
+                                    ]
                                   }
                                 },
                                 _vm._l(this.galleries, function(gallery) {
@@ -52375,13 +52561,37 @@ var render = function() {
                         _c(
                           "select",
                           {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.take,
+                                expression: "take"
+                              }
+                            ],
                             staticClass: "form-control",
                             on: {
-                              change: function($event) {
-                                return _vm.onShownDataPerPaginationChange(
-                                  $event
-                                )
-                              }
+                              change: [
+                                function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.take = $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                },
+                                function($event) {
+                                  return _vm.onShownDataPerPaginationChange(
+                                    $event
+                                  )
+                                }
+                              ]
                             }
                           },
                           _vm._l(this.available_shown_data, function(shown) {
@@ -53453,13 +53663,37 @@ var render = function() {
                         _c(
                           "select",
                           {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.take,
+                                expression: "take"
+                              }
+                            ],
                             staticClass: "form-control",
                             on: {
-                              change: function($event) {
-                                return _vm.onShownDataPerPaginationChange(
-                                  $event
-                                )
-                              }
+                              change: [
+                                function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.take = $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                },
+                                function($event) {
+                                  return _vm.onShownDataPerPaginationChange(
+                                    $event
+                                  )
+                                }
+                              ]
                             }
                           },
                           _vm._l(this.available_shown_data, function(shown) {

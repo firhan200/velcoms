@@ -1,5 +1,10 @@
 /node_modules
 /public/hot
+/public/images/galleries
+/public/images/photos
+/public/images/articles
+/public/images/sliders
+/public/images/social_links
 /public/storage
 /storage/*.key
 /vendor
