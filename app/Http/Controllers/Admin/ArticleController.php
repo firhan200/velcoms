@@ -65,24 +65,27 @@ class ArticleController extends BaseController
             
         	//results get query
             $results = $this->model->
-            			where('is_deleted', 0)->
+            			where('articles.is_deleted', 0)->
             			where(function($query){
 			                $query->
-			                where('title', 'LIKE', "%".$this->data['keyword']."%")->
-			                orWhere('slug', 'LIKE', "%".$this->data['keyword']."%");
+			                where('articles.title', 'LIKE', "%".$this->data['keyword']."%")->
+			                orWhere('articles.slug', 'LIKE', "%".$this->data['keyword']."%");
                         })->
-            			orderBy($order_by, $sort)->
+                        leftJoin('article_categories', 'articles.article_category_id', 'article_categories.id')->
+                        select('articles.*', 'article_categories.name AS article_category_name')->
+                        orderBy('articles.'.$order_by, $sort)->
             			skip($skip)->take($take)->
                         get();
                         
             //total results
             $total_results = $this->model->
-						where('is_deleted', 0)->
-            			where(function($query){
-			                $query->
-			                where('title', 'LIKE', "%".$this->data['keyword']."%")->
-			                orWhere('slug', 'LIKE', "%".$this->data['keyword']."%");
+                        where('articles.is_deleted', 0)->
+                        where(function($query){
+                            $query->
+                            where('articles.title', 'LIKE', "%".$this->data['keyword']."%")->
+                            orWhere('articles.slug', 'LIKE', "%".$this->data['keyword']."%");
                         })->
+                        leftJoin('article_categories', 'articles.article_category_id', 'article_categories.id')->
                         count();
                         
             //total page

@@ -46,12 +46,18 @@
                 <div class="container-fluid custom-table">
                     <div class="header d-none d-md-block">
                         <div class="row">
-                            <div class="no-pad col-sm-3">
+                            <div class="no-pad col-sm-2">
                                 Cover
                             </div>
                             <div class="no-pad col-sm-2">                            
                                 <span class="link" v-on:click="sortBy('title')">
                                     Title
+                                    <SortArrow :desc="this.desc"/>
+                                </span>
+                            </div>
+                            <div class="no-pad col-sm-2">                            
+                                <span class="link" v-on:click="sortBy('article_category_id')">
+                                    Category
                                     <SortArrow :desc="this.desc"/>
                                 </span>
                             </div>
@@ -61,7 +67,7 @@
                                     <SortArrow :desc="this.desc"/>
                                 </span>
                             </div>
-                            <div class="no-pad col-sm-2">
+                            <div class="no-pad col-sm-1">
                                 <span class="link" v-on:click="sortBy('is_active')">
                                     Is Active
                                     <SortArrow :desc="this.desc"/>
@@ -77,16 +83,21 @@
                     </div>
                     <div class="body" v-if="!this.is_loading">
                         <div v-bind:key="data.id" v-for="data in this.datas" class="row">
-                            <div class="no-pad col-sm-3 m-center">
+                            <div class="no-pad col-sm-2 m-center">
                                 <ImagePreviewer :photo="data.image_cover" size="small" path="/images/articles/"/>
                             </div>
                             <div class="no-pad col-sm-2 m-center">
                                 {{ data.title }}
                             </div>
-                            <div class="no-pad col-sm-3 m-center">
-                                {{ data.slug }}
-                            </div>
                             <div class="no-pad col-sm-2 m-center">
+                                <router-link :to="'/cms/article_categories?show=detail&id='+data.article_category_id">
+                                {{ data.article_category_name }}
+                                </router-link>
+                            </div>
+                            <div class="no-pad col-sm-3 m-center">
+                                <CuttedString :words="data.slug" maxLength="50" />
+                            </div>
+                            <div class="no-pad col-sm-1 m-center">
                                 <IsActiveDisplay :is_active="data.is_active"/>
                             </div>
                             <div class="no-pad col-sm-2 m-center">
@@ -118,6 +129,7 @@ import ErrorMessage from './../../styles/ErrorMessage.vue';
 import IsActiveDisplay from './../../styles/IsActiveDisplay.vue';
 import SortArrow from './../../styles/SortArrow.vue';
 import ImagePreviewer from './../../styles/ImagePreviewer.vue';
+import CuttedString from './../../styles/CuttedString.vue';
 import Detail from './Detail.vue';
 import Add from './Add.vue';
 import Edit from './Edit.vue';
@@ -131,7 +143,8 @@ export default {
         SortArrow,
         Detail,
         Add,
-        Edit
+        Edit,
+        CuttedString
     },
     data(){
         return{
