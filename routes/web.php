@@ -15,3 +15,6 @@
 Route::get('/admin', function () {
     return view('admin.app');
 });
+
+/** Front Web */
+Route::get('/', 'HomeController@index');
