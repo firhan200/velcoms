@@ -79113,9 +79113,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/firhan/app/laravel/velcoms/resources/js/app.js */"./resources/js/app.js");
-__webpack_require__(/*! /home/firhan/app/laravel/velcoms/resources/sass/app.scss */"./resources/sass/app.scss");
-module.exports = __webpack_require__(/*! /home/firhan/app/laravel/velcoms/resources/sass/main.scss */"./resources/sass/main.scss");
+__webpack_require__(/*! /mnt/d/websites/velcoms/resources/js/app.js */"./resources/js/app.js");
+__webpack_require__(/*! /mnt/d/websites/velcoms/resources/sass/app.scss */"./resources/sass/app.scss");
+module.exports = __webpack_require__(/*! /mnt/d/websites/velcoms/resources/sass/main.scss */"./resources/sass/main.scss");
 
 
 /***/ })

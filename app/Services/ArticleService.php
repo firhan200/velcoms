@@ -10,7 +10,7 @@ class ArticleService{
         $this->model = new \App\Models\Article;
     }
 
-    public function renderLatest($take = 4){
+    public function renderLatest($take = 3){
         //get active social link
         $this->data['articles'] = $this->model::where('articles.is_active', 1)->
             where('articles.is_deleted', 0)->orderBy('id', 'desc')->
