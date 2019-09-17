@@ -3655,6 +3655,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 //libs
 
  //components
@@ -3719,7 +3722,8 @@ __webpack_require__.r(__webpack_exports__);
       this.is_error = is_error;
 
       if (is_error) {
-        this.error_message = error_message;
+        var errorMessage = Array.isArray(error_message) ? error_message.join(", ") : error_message;
+        this.error_message = errorMessage;
         this.error_icon = error_icon; // scroll to top error messages
 
         window.scrollTo({
@@ -3844,6 +3848,7 @@ __webpack_require__.r(__webpack_exports__);
             } else {
               //failed to add
               var message = typeof res.data.status !== 'undefined' ? res.data.status : res.data.message;
+              message = res.data.errors.length > 0 ? res.data.errors : message;
 
               _this2.showError(true, message, 'fa fa-info-circle');
             }
@@ -3983,6 +3988,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 //libs
 
  //components
@@ -4006,6 +4019,7 @@ __webpack_require__.r(__webpack_exports__);
       title: '',
       slug: '',
       body: '',
+      url: '',
       article_category_id: '',
       article_category_name: '',
       is_active: '',
@@ -4040,6 +4054,7 @@ __webpack_require__.r(__webpack_exports__);
       this.title = detailObj.title;
       this.slug = detailObj.slug;
       this.body = detailObj.body;
+      this.url = detailObj.url;
       this.article_category_id = detailObj.article_category_id;
       this.article_category_name = detailObj.article_category_name;
       this.is_active = detailObj.is_active === 1 ? true : false;
@@ -4114,6 +4129,9 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+//
+//
+//
 //
 //
 //
@@ -46890,6 +46908,12 @@ var render = function() {
           _c("div", { staticClass: "form-group" }, [
             _c("label", [_vm._v("Slug")]),
             _vm._v(" "),
+            _c("div", { staticClass: "help" }, [
+              _vm._v(
+                "\n                short description of article.\n            "
+              )
+            ]),
+            _vm._v(" "),
             _c("textarea", {
               directives: [
                 {
@@ -47151,6 +47175,18 @@ var render = function() {
             _vm._v(" "),
             _c("div", { staticClass: "row detail" }, [
               _c("div", { staticClass: "col-sm-2 label" }, [
+                _vm._v("\n                Url\n            ")
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-sm-10 body" }, [
+                _vm._v(
+                  "\n                " + _vm._s(this.url) + "\n            "
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row detail" }, [
+              _c("div", { staticClass: "col-sm-2 label" }, [
                 _vm._v("\n                Slug\n            ")
               ]),
               _vm._v(" "),
@@ -47370,6 +47406,12 @@ var render = function() {
                 _vm._v(" "),
                 _c("div", { staticClass: "form-group" }, [
                   _c("label", [_vm._v("Slug")]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "help" }, [
+                    _vm._v(
+                      "\n                    short description of article.\n                "
+                    )
+                  ]),
                   _vm._v(" "),
                   _c("textarea", {
                     directives: [
@@ -79113,9 +79155,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /mnt/d/websites/velcoms/resources/js/app.js */"./resources/js/app.js");
-__webpack_require__(/*! /mnt/d/websites/velcoms/resources/sass/app.scss */"./resources/sass/app.scss");
-module.exports = __webpack_require__(/*! /mnt/d/websites/velcoms/resources/sass/main.scss */"./resources/sass/main.scss");
+__webpack_require__(/*! /home/firhan/app/laravel/velcoms/resources/js/app.js */"./resources/js/app.js");
+__webpack_require__(/*! /home/firhan/app/laravel/velcoms/resources/sass/app.scss */"./resources/sass/app.scss");
+module.exports = __webpack_require__(/*! /home/firhan/app/laravel/velcoms/resources/sass/main.scss */"./resources/sass/main.scss");
 
 
 /***/ })

@@ -18,6 +18,7 @@ class CreateArticlesTable extends Migration
             $table->integer('article_category_id');
             $table->string('image_cover')->nullable(true)->default(null);
             $table->string('title');
+            $table->string('url');
             $table->text('slug');
             $table->text('body');
             $table->boolean('is_active');

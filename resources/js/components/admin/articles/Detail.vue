@@ -24,6 +24,14 @@
             </div>
             <div class="row detail">
                 <div class="col-sm-2 label">
+                    Url
+                </div>
+                <div class="col-sm-10 body">
+                    {{ this.url }}
+                </div>
+            </div>
+            <div class="row detail">
+                <div class="col-sm-2 label">
                     Slug
                 </div>
                 <div class="col-sm-10 body">
@@ -106,6 +114,7 @@ export default {
             title : '',
             slug : '',
             body : '',
+            url : '',
             article_category_id : '',
             article_category_name : '',
             is_active : '',
@@ -142,6 +151,7 @@ export default {
             this.title = detailObj.title;
             this.slug = detailObj.slug;
             this.body = detailObj.body;
+            this.url = detailObj.url;
             this.article_category_id = detailObj.article_category_id;
             this.article_category_name = detailObj.article_category_name;
             this.is_active = detailObj.is_active===1 ? true : false;

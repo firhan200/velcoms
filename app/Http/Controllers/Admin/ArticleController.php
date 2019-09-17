@@ -105,35 +105,48 @@ class ArticleController extends BaseController
 
     //create data POST
     public function create(Request $request){
-        $response = ['is_success' => false, 'message' => ''];
+        $response = ['is_success' => false, 'message' => '', 'errors' => []];
 
         try{
-            //init model
-            $model = $this->model;       
+            $validationErrors = [];         
 
-            //check image cover
-            if($request->input('image_cover')!=null){
-                $image_cover = $this->_convertBase64Image($request->input('image_cover'));
-                //get filename
-                $file_name = $image_cover['name'];
-                //save
-                File::put($this->data['image_path'].$file_name, base64_decode($image_cover['image']));
-                //add to model obj
-                $model->image_cover = $file_name;
+            //validate
+            $articleQuery = new \App\Models\Article;
+            $titleExist = $articleQuery::where('title', $request->title)->first();
+            if($titleExist!=null){
+                $response['errors'][] = "title already taken.";
             }
 
-            //fill data
-            $model->title = $request->input('title');
-            $model->slug = $request->input('slug');
-            $model->body = $request->input('body');
-            $model->article_category_id = $request->input('article_category_id');
-            $model->is_active = 1; //default is active
-            $model->is_deleted = 0; //default
+            if(count($response['errors']) < 1){
+                //no error
+                //init model
+                $model = $this->model;       
 
-            //save to db
-            $model->save();
+                //check image cover
+                if($request->input('image_cover')!=null){
+                    $image_cover = $this->_convertBase64Image($request->input('image_cover'));
+                    //get filename
+                    $file_name = $image_cover['name'];
+                    //save
+                    File::put($this->data['image_path'].$file_name, base64_decode($image_cover['image']));
+                    //add to model obj
+                    $model->image_cover = $file_name;
+                }
 
-            $response['is_success'] = true;
+                //fill data
+                $model->title = $request->input('title');
+                $model->slug = $request->input('slug');
+                $model->body = $request->input('body');
+                $model->url = urlencode($request->input('title'));
+                $model->article_category_id = $request->input('article_category_id');
+                $model->is_active = 1; //default is active
+                $model->is_deleted = 0; //default
+
+                //save to db
+                $model->save();
+
+                $response['is_success'] = true;
+            }
         }catch(\Exception $ex){
             //error
             $response['status'] = $ex->getMessage();
@@ -178,7 +191,7 @@ class ArticleController extends BaseController
 
     //update /{id} PUT
     public function update(Request $request, $id){
-        $response = ['data' => null, 'is_success' => false, 'message' => ''];
+        $response = ['data' => null, 'is_success' => false, 'message' => '', 'errors' => []];
 
         try{
             //init model
@@ -186,29 +199,39 @@ class ArticleController extends BaseController
 
             $modelObj = $model::where('id', $id)->where('is_deleted', 0)->first();
             if($modelObj!=null){
-                //update
-                //check image cover
-                if($request->input('image_cover')!=null){
-                    $image_cover = $this->_convertBase64Image($request->input('image_cover'));
-                    //get filename
-                    $file_name = $image_cover['name'];
-                    //save
-                    File::put($this->data['image_path'].$file_name, base64_decode($image_cover['image']));
-                    //add to model obj
-                    $modelObj->image_cover = $file_name;
+                //validate
+                $articleQuery = new \App\Models\Article;
+                $titleExist = $articleQuery::where('title', $request->title)->where('id', '!=', $modelObj->id)->first();
+                if($titleExist!=null){
+                    $response['errors'][] = "title already taken.";
                 }
 
-                $modelObj->title = $request->title;
-                $modelObj->slug = $request->slug;
-                $modelObj->body = $request->body;
-                $modelObj->article_category_id = $request->article_category_id;
-                $modelObj->is_active = $request->is_active;
+                if(count($response['errors']) < 1){
+                    //update
+                    //check image cover
+                    if($request->input('image_cover')!=null){
+                        $image_cover = $this->_convertBase64Image($request->input('image_cover'));
+                        //get filename
+                        $file_name = $image_cover['name'];
+                        //save
+                        File::put($this->data['image_path'].$file_name, base64_decode($image_cover['image']));
+                        //add to model obj
+                        $modelObj->image_cover = $file_name;
+                    }
 
-                //save
-                $modelObj->save();
+                    $modelObj->title = $request->title;
+                    $modelObj->slug = $request->slug;
+                    $modelObj->body = $request->body;
+                    $modelObj->url = urlencode($request->title);
+                    $modelObj->article_category_id = $request->article_category_id;
+                    $modelObj->is_active = $request->is_active;
 
-                $response['is_success'] = true;
-                $response['data'] = $modelObj;
+                    //save
+                    $modelObj->save();
+
+                    $response['is_success'] = true;
+                    $response['data'] = $modelObj;
+                }
             }else{
                 $response['message'] = 'data not found';
             }

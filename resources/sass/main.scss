@@ -71,8 +71,21 @@ body{
     }
 }
 
-.article-box{
-    background-color:#fff;
+.articles{
+    a{
+        text-decoration: none;
+    }
+
+    .card{
+        .card-title{
+            color :#1c1c1c;
+            font-size:14pt;
+        }
+        .card-text{
+            color :#1c1c1c;
+            font-size:11pt;
+        }
+    }
 }
 
 .footer{

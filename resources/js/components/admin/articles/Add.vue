@@ -18,6 +18,9 @@
             </div>
             <div class="form-group">
                 <label>Slug</label>
+                <div class="help">
+                    short description of article.
+                </div>
                 <textarea v-model="slug" class="form-control" placeholder="Slug" maxlength="500" required></textarea>
             </div>
             <div class="form-group col-sm-4 p-0">
@@ -117,7 +120,8 @@ export default {
             this.is_error = is_error;
 
             if(is_error){
-                this.error_message = error_message;
+                let errorMessage = Array.isArray(error_message) ? error_message.join(", ") : error_message;
+                this.error_message = errorMessage;
                 this.error_icon = error_icon;
 
                 // scroll to top error messages
@@ -245,6 +249,7 @@ export default {
                         }else{
                             //failed to add
                             let message = (typeof res.data.status !=='undefined' ? res.data.status : res.data.message);
+                            message = res.data.errors.length > 0 ? res.data.errors : message;
                             this.showError(true, message, 'fa fa-info-circle');
                         }
                     }

@@ -24,6 +24,9 @@
                 </div>
                 <div class="form-group">
                     <label>Slug</label>
+                    <div class="help">
+                        short description of article.
+                    </div>
                     <textarea v-model="slug" class="form-control" placeholder="Slug" maxlength="500" required></textarea>
                 </div>   
                 <div class="form-group">

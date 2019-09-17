@@ -63,8 +63,18 @@ body {
   font-weight: lighter;
 }
 
-.article-box {
-  background-color: #fff;
+.articles a {
+  text-decoration: none;
+}
+
+.articles .card .card-title {
+  color: #1c1c1c;
+  font-size: 14pt;
+}
+
+.articles .card .card-text {
+  color: #1c1c1c;
+  font-size: 11pt;
 }
 
 .footer {
