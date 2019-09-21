@@ -16,6 +16,7 @@ import AdminUpdateProfile from './components/admin/profiles/Update';
 import AdminChangePassword from './components/admin/profiles/ChangePassword';
 
 /* CRUD */
+import AdminPages from './components/admin/pages/List';
 import AdminArticleCategories from './components/admin/article_categories/List';
 import AdminArticles from './components/admin/articles/List';
 import AdminSliders from './components/admin/sliders/List';
@@ -61,6 +62,10 @@ const router = new VueRouter({
                 },
 
                 /* CRUD */
+                {
+                    path: 'pages',
+                    component : AdminPages
+                },
                 {
                     path: 'article_categories',
                     component : AdminArticleCategories

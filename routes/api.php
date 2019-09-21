@@ -30,6 +30,15 @@ Route::prefix('admin')->group(function(){
         Route::put('/password', 'Admin\AuthController@updatePassword')->middleware('jwt.verify');
     });
 
+    /* Pages */
+    Route::prefix('pages')->group(function(){
+        Route::get('/', 'Admin\PageController@index')->middleware('jwt.verify');
+        Route::get('/{id}', 'Admin\PageController@details')->middleware('jwt.verify');
+        Route::post('/', 'Admin\PageController@create')->middleware('jwt.verify');
+        Route::put('/{id}', 'Admin\PageController@update')->middleware('jwt.verify');
+        Route::delete('/{id}', 'Admin\PageController@delete')->middleware('jwt.verify');
+    });
+
     /* Article Categories */
     Route::prefix('article_categories')->group(function(){
         Route::get('/', 'Admin\ArticleCategoryController@index')->middleware('jwt.verify');

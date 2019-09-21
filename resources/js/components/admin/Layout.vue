@@ -37,7 +37,13 @@
                                     <i class="fa fa-tachometer-alt"></i>
                                     <span>Dashboard</span>
                                 </router-link>
-                            </li> 
+                            </li>
+                            <li>
+                                <router-link to='/cms/pages'>
+                                    <i class="fa fa-file"></i>
+                                    <span>Pages</span>
+                                </router-link>
+                            </li>
                             <li class="sidebar-dropdown">
                                 <a>
                                     <i class="fa fa-book"></i>
