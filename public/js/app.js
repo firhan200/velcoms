@@ -7253,6 +7253,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //libs
 
  //components
@@ -7271,6 +7280,8 @@ __webpack_require__.r(__webpack_exports__);
       //form data
       title: '',
       url: '',
+      menu_name: '',
+      is_show_on_menu: true,
       body: '',
       //loader
       is_loading: false,
@@ -7287,6 +7298,9 @@ __webpack_require__.r(__webpack_exports__);
     this.keyboardPress();
   },
   methods: {
+    onShowOnMenuChange: function onShowOnMenuChange(e) {
+      this.is_show_on_menu = e.value;
+    },
     backToList: function backToList() {
       this.$emit('backToList');
     },
@@ -7355,6 +7369,8 @@ __webpack_require__.r(__webpack_exports__);
       var body = {
         title: this.title,
         url: this.url,
+        menu_name: this.menu_name,
+        is_show_on_menu: this.is_show_on_menu,
         body: CKEDITOR.instances.body.getData()
       }; //validation
 
@@ -7500,6 +7516,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //libs
 
  //components
@@ -7522,6 +7554,8 @@ __webpack_require__.r(__webpack_exports__);
       title: '',
       body: '',
       url: '',
+      menu_name: '',
+      is_show_on_menu: true,
       is_active: '',
       created_at: '',
       updated_at: '',
@@ -7553,6 +7587,8 @@ __webpack_require__.r(__webpack_exports__);
       this.title = detailObj.title;
       this.body = detailObj.body;
       this.url = detailObj.url;
+      this.menu_name = detailObj.menu_name;
+      this.is_show_on_menu = detailObj.is_show_on_menu === 1 ? true : false;
       this.is_active = detailObj.is_active === 1 ? true : false;
       this.created_at = detailObj.created_at;
       this.updated_at = detailObj.updated_at;
@@ -7663,6 +7699,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //libs
 
  //components
@@ -7684,6 +7729,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       //form data
       title: '',
       url: '',
+      menu_name: '',
+      is_show_on_menu: true,
       body: '',
       is_active: '',
       //loader
@@ -7709,6 +7756,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     });
   },
   methods: {
+    onShowOnMenuChange: function onShowOnMenuChange(e) {
+      this.is_show_on_menu = e.value;
+    },
     onActiveChange: function onActiveChange(e) {
       this.is_active = e.value;
     },
@@ -7749,6 +7799,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.title = detailObj.title;
       this.url = detailObj.url;
       this.body = detailObj.body;
+      this.menu_name = detailObj.menu_name;
+      this.is_show_on_menu = detailObj.is_show_on_menu === 1 ? true : false;
       this.is_active = detailObj.is_active === 1 ? true : false;
     },
     getDetail: function () {
@@ -7844,6 +7896,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var body = {
         title: this.title,
         url: this.url,
+        menu_name: this.menu_name,
+        is_show_on_menu: this.is_show_on_menu,
         body: CKEDITOR.instances.body.getData(),
         is_active: this.is_active
       }; //validation
@@ -7938,6 +7992,15 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -51239,6 +51302,61 @@ var render = function() {
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "form-group" }, [
+            _c("label", [_vm._v("Menu Name")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.menu_name,
+                  expression: "menu_name"
+                }
+              ],
+              staticClass: "form-control",
+              attrs: {
+                type: "text",
+                placeholder: "Menu Name",
+                maxlength: "100",
+                required: ""
+              },
+              domProps: { value: _vm.menu_name },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.menu_name = $event.target.value
+                }
+              }
+            })
+          ]),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "form-group" },
+            [
+              _c("label", [_vm._v("Show on Menu")]),
+              _vm._v("\n             \n            "),
+              _c("toggle-button", {
+                staticClass: "toggle-margin",
+                attrs: {
+                  value: this.is_show_on_menu,
+                  color: "#82C7EB",
+                  sync: true,
+                  labels: true
+                },
+                on: {
+                  change: function($event) {
+                    return _vm.onShowOnMenuChange($event)
+                  }
+                }
+              })
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "form-group" }, [
             _c("label", [_vm._v("URL")]),
             _vm._v(" "),
             _c("input", {
@@ -51410,6 +51528,37 @@ var render = function() {
                   "\n                " + _vm._s(this.url) + "\n            "
                 )
               ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row detail" }, [
+              _c("div", { staticClass: "col-sm-2 label" }, [
+                _vm._v("\n                Menu Name\n            ")
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-sm-10 body" }, [
+                _vm._v(
+                  "\n                " +
+                    _vm._s(this.menu_name) +
+                    "\n            "
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row detail" }, [
+              _c("div", { staticClass: "col-sm-2 label" }, [
+                _vm._v("\n                Is Show on Menu\n            ")
+              ]),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "col-sm-10 body" },
+                [
+                  _c("IsActiveDisplay", {
+                    attrs: { is_active: this.is_show_on_menu }
+                  })
+                ],
+                1
+              )
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "row detail" }, [
@@ -51611,6 +51760,61 @@ var render = function() {
                     )
                   ])
                 ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", [_vm._v("Menu Name")]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.menu_name,
+                        expression: "menu_name"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      placeholder: "Menu Name",
+                      maxlength: "100",
+                      required: ""
+                    },
+                    domProps: { value: _vm.menu_name },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.menu_name = $event.target.value
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "form-group" },
+                  [
+                    _c("label", [_vm._v("Show on Menu")]),
+                    _vm._v("\n                 \n                "),
+                    _c("toggle-button", {
+                      staticClass: "toggle-margin",
+                      attrs: {
+                        value: this.is_show_on_menu,
+                        color: "#82C7EB",
+                        sync: true,
+                        labels: true
+                      },
+                      on: {
+                        change: function($event) {
+                          return _vm.onShowOnMenuChange($event)
+                        }
+                      }
+                    })
+                  ],
+                  1
+                ),
                 _vm._v(" "),
                 _c("div", { staticClass: "form-group" }, [
                   _c("label", [_vm._v("Body")]),
@@ -51896,7 +52100,7 @@ var render = function() {
                 _c("div", { staticClass: "container-fluid custom-table" }, [
                   _c("div", { staticClass: "header d-none d-md-block" }, [
                     _c("div", { staticClass: "row" }, [
-                      _c("div", { staticClass: "no-pad col-sm-4" }, [
+                      _c("div", { staticClass: "no-pad col-sm-3" }, [
                         _c(
                           "span",
                           {
@@ -51917,7 +52121,7 @@ var render = function() {
                         )
                       ]),
                       _vm._v(" "),
-                      _c("div", { staticClass: "no-pad col-sm-4" }, [
+                      _c("div", { staticClass: "no-pad col-sm-3" }, [
                         _c(
                           "span",
                           {
@@ -51931,6 +52135,27 @@ var render = function() {
                           [
                             _vm._v(
                               "\n                                URL\n                                "
+                            ),
+                            _c("SortArrow", { attrs: { desc: this.desc } })
+                          ],
+                          1
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "no-pad col-sm-2" }, [
+                        _c(
+                          "span",
+                          {
+                            staticClass: "link",
+                            on: {
+                              click: function($event) {
+                                return _vm.sortBy("is_show_on_menu")
+                              }
+                            }
+                          },
+                          [
+                            _vm._v(
+                              "\n                                Is Show on Menu\n                                "
                             ),
                             _c("SortArrow", { attrs: { desc: this.desc } })
                           ],
@@ -51988,7 +52213,7 @@ var render = function() {
                               [
                                 _c(
                                   "div",
-                                  { staticClass: "no-pad col-sm-4 m-center" },
+                                  { staticClass: "no-pad col-sm-3 m-center" },
                                   [
                                     _vm._v(
                                       "\n                            " +
@@ -52000,7 +52225,7 @@ var render = function() {
                                 _vm._v(" "),
                                 _c(
                                   "div",
-                                  { staticClass: "no-pad col-sm-4 m-center" },
+                                  { staticClass: "no-pad col-sm-3 m-center" },
                                   [
                                     _vm._v(
                                       "\n                            " +
@@ -52008,6 +52233,17 @@ var render = function() {
                                         "\n                        "
                                     )
                                   ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "no-pad col-sm-2 m-center" },
+                                  [
+                                    _c("IsActiveDisplay", {
+                                      attrs: { is_active: data.is_show_on_menu }
+                                    })
+                                  ],
+                                  1
                                 ),
                                 _vm._v(" "),
                                 _c(

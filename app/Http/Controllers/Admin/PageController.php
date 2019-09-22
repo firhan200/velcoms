@@ -113,6 +113,11 @@ class PageController extends BaseController
                 $response['errors'][] = "url already taken.";
             }
 
+            $menuNameExist = $objQuery::where('menu_name', $request->menu_name)->first();
+            if($menuNameExist!=null){
+                $response['errors'][] = "menu name already taken.";
+            }
+
             if(count($response['errors']) < 1){
                 //init model
                 $model = $this->model;
@@ -120,7 +125,9 @@ class PageController extends BaseController
                 //fill data
                 $model->title = $request->input('title');
                 $model->url = urlencode($request->input('url'));
+                $model->menu_name = $request->input('menu_name');
                 $model->body = $request->input('body');
+                $model->is_show_on_menu = $request->input('is_show_on_menu');
                 $model->is_active = 1; //default is active
                 $model->is_deleted = 0; //default
 
@@ -192,11 +199,18 @@ class PageController extends BaseController
                     $response['errors'][] = "url already taken.";
                 }
 
+                $menuNameExist = $objQuery::where('menu_name', $request->url)->where('id', '!=', $modelObj->id)->first();
+                if($menuNameExist!=null){
+                    $response['errors'][] = "menu name already taken.";
+                }
+
                 if(count($response['errors']) < 1){
                     //update
                     $modelObj->title = $request->title;
                     $modelObj->url = urlencode($request->url);
                     $modelObj->body = $request->body;
+                    $modelObj->menu_name = $request->menu_name;
+                    $modelObj->is_show_on_menu = $request->is_show_on_menu;
                     $modelObj->is_active = $request->is_active;
 
                     //save

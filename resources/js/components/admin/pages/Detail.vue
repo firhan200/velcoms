@@ -24,6 +24,22 @@
             </div>
             <div class="row detail">
                 <div class="col-sm-2 label">
+                    Menu Name
+                </div>
+                <div class="col-sm-10 body">
+                    {{ this.menu_name }}
+                </div>
+            </div>
+            <div class="row detail">
+                <div class="col-sm-2 label">
+                    Is Show on Menu
+                </div>
+                <div class="col-sm-10 body">
+                    <IsActiveDisplay :is_active="this.is_show_on_menu"/>
+                </div>
+            </div>
+            <div class="row detail">
+                <div class="col-sm-2 label">
                     Body
                 </div>
                 <div class="col-sm-10 body">
@@ -89,6 +105,8 @@ export default {
             title : '',
             body : '',
             url : '',
+            menu_name : '',
+            is_show_on_menu : true,
             is_active : '',
             created_at : '',
             updated_at : '',
@@ -122,6 +140,8 @@ export default {
             this.title = detailObj.title;
             this.body = detailObj.body;
             this.url = detailObj.url;
+            this.menu_name = detailObj.menu_name;
+            this.is_show_on_menu = detailObj.is_show_on_menu===1 ? true : false;
             this.is_active = detailObj.is_active===1 ? true : false;
             this.created_at = detailObj.created_at;
             this.updated_at = detailObj.updated_at;

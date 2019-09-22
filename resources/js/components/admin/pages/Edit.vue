@@ -19,6 +19,15 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label>Menu Name</label>
+                    <input v-model="menu_name" type="text" class="form-control" placeholder="Menu Name" maxlength="100" required/>
+                </div>
+                <div class="form-group">
+                    <label>Show on Menu</label>
+                    &nbsp;
+                    <toggle-button class="toggle-margin" :value="this.is_show_on_menu" color="#82C7EB" :sync="true" :labels="true" @change="onShowOnMenuChange($event)"/>
+                </div>
+                <div class="form-group">
                     <label>Body</label>
                     <textarea id="body" v-model="body" class="ckeditor form-control" placeholder="Body" maxlength="2000" required></textarea>
                 </div>       
@@ -62,6 +71,8 @@ export default {
             //form data
             title: '',
             url: '',
+            menu_name: '',
+            is_show_on_menu: true,
             body: '',
             is_active : '',
 
@@ -89,6 +100,9 @@ export default {
         });
     },
     methods : {
+        onShowOnMenuChange(e){
+            this.is_show_on_menu = e.value;
+        },
         onActiveChange(e){
             this.is_active = e.value;
         },
@@ -126,6 +140,8 @@ export default {
             this.title = detailObj.title;
             this.url = detailObj.url;
             this.body = detailObj.body;
+            this.menu_name = detailObj.menu_name;
+            this.is_show_on_menu = detailObj.is_show_on_menu===1 ? true : false;
             this.is_active = detailObj.is_active===1 ? true : false;
         },
         async getDetail(id){
@@ -201,6 +217,8 @@ export default {
             let body = {
                 title : this.title,
                 url : this.url,
+                menu_name : this.menu_name,
+                is_show_on_menu : this.is_show_on_menu,
                 body : CKEDITOR.instances.body.getData(),
                 is_active : this.is_active,
             }

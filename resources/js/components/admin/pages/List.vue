@@ -46,18 +46,24 @@
                 <div class="container-fluid custom-table">
                     <div class="header d-none d-md-block">
                         <div class="row">
-                            <div class="no-pad col-sm-4">                            
+                            <div class="no-pad col-sm-3">                            
                                 <span class="link" v-on:click="sortBy('title')">
                                     Title
                                     <SortArrow :desc="this.desc"/>
                                 </span>
                             </div>
-                            <div class="no-pad col-sm-4">                            
+                            <div class="no-pad col-sm-3">                            
                                 <span class="link" v-on:click="sortBy('article_category_id')">
                                     URL
                                     <SortArrow :desc="this.desc"/>
                                 </span>
-                            </div>                          
+                            </div>     
+                            <div class="no-pad col-sm-2">
+                                <span class="link" v-on:click="sortBy('is_show_on_menu')">
+                                    Is Show on Menu
+                                    <SortArrow :desc="this.desc"/>
+                                </span>
+                            </div>                     
                             <div class="no-pad col-sm-2">
                                 <span class="link" v-on:click="sortBy('is_active')">
                                     Is Active
@@ -74,11 +80,14 @@
                     </div>
                     <div class="body" v-if="!this.is_loading">
                         <div v-bind:key="data.id" v-for="data in this.datas" class="row">
-                            <div class="no-pad col-sm-4 m-center">
+                            <div class="no-pad col-sm-3 m-center">
                                 {{ data.title }}
                             </div>
-                            <div class="no-pad col-sm-4 m-center">
+                            <div class="no-pad col-sm-3 m-center">
                                 {{ data.url }}
+                            </div>
+                            <div class="no-pad col-sm-2 m-center">
+                                <IsActiveDisplay :is_active="data.is_show_on_menu"/>
                             </div>
                             <div class="no-pad col-sm-2 m-center">
                                 <IsActiveDisplay :is_active="data.is_active"/>

@@ -10,6 +10,15 @@
                 <input v-model="title" type="text" class="form-control" placeholder="Title" maxlength="100" required/>
             </div>
             <div class="form-group">
+                <label>Menu Name</label>
+                <input v-model="menu_name" type="text" class="form-control" placeholder="Menu Name" maxlength="100" required/>
+            </div>
+            <div class="form-group">
+                <label>Show on Menu</label>
+                &nbsp;
+                <toggle-button class="toggle-margin" :value="this.is_show_on_menu" color="#82C7EB" :sync="true" :labels="true" @change="onShowOnMenuChange($event)"/>
+            </div>
+            <div class="form-group">
                 <label>URL</label>
                 <input v-model="url" type="text" class="form-control" placeholder="ex: about-us" maxlength="100" required/>
                 <div class="help">
@@ -49,6 +58,8 @@ export default {
             //form data
             title: '',
             url: '',
+            menu_name: '',
+            is_show_on_menu: true,
             body: '',
 
             //loader
@@ -68,6 +79,9 @@ export default {
         this.keyboardPress();
     },
     methods : { 
+        onShowOnMenuChange(e){
+            this.is_show_on_menu = e.value;
+        },
         backToList(){
             this.$emit('backToList');
         },
@@ -134,6 +148,8 @@ export default {
             let body = {
                 title : this.title,
                 url : this.url,
+                menu_name : this.menu_name,
+                is_show_on_menu : this.is_show_on_menu,
                 body : CKEDITOR.instances.body.getData(),
             }
 

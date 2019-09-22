@@ -10,3 +10,9 @@
 <li class="nav-item active">
     <a class="nav-link" href="#">CONTACT US</a>
 </li>
+
+@foreach($pages as $page)
+<li class="nav-item active">
+    <a class="nav-link" href="{{ url('/pages/'.$page->url) }}">{{ $page->menu_name }}</a>
+</li>
+@endforeach

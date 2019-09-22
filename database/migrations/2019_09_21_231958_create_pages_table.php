@@ -17,7 +17,9 @@ class CreatePagesTable extends Migration
             $table->bigIncrements('id');
             $table->string('title');
             $table->string('url');
+            $table->string('menu_name');
             $table->longText('body');
+            $table->boolean('is_show_on_menu');
             $table->boolean('is_active');
             $table->boolean('is_deleted');
             $table->timestamps();

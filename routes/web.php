@@ -18,6 +18,12 @@ Route::get('/admin', function () {
 
 /** Front Web */
 Route::get('/', 'HomeController@index');
+
+/* articles */
+Route::prefix('pages')->group(function(){
+    Route::get('/{url}', 'PageController@show');
+});
+
 /* articles */
 Route::prefix('articles')->group(function(){
     Route::get('/', 'ArticleController@index');
