@@ -2492,9 +2492,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 //libs
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -47014,9 +47011,7 @@ var render = function() {
                   ])
                 ],
                 1
-              ),
-              _vm._v(" "),
-              _vm._m(6)
+              )
             ])
           ])
         ]),
@@ -47039,13 +47034,11 @@ var render = function() {
                 : _vm._e()
             ]),
             _vm._v(" "),
-            _vm._m(7),
-            _vm._v(" "),
             _c("router-link", { attrs: { to: "/cms/update-profile" } }, [
               _c("i", { staticClass: "fa fa-cog" })
             ]),
             _vm._v(" "),
-            _vm._m(8)
+            _vm._m(6)
           ],
           1
         )
@@ -47137,20 +47130,6 @@ var staticRenderFns = [
       _vm._v(" "),
       _c("span", [_vm._v("Gallery")])
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("li", { staticClass: "header-menu" }, [
-      _c("span", [_vm._v("Settings")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("a", [_c("i", { staticClass: "fa fa-envelope" })])
   },
   function() {
     var _vm = this

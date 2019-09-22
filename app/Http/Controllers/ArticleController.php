@@ -22,11 +22,6 @@ class ArticleController extends Controller
     public function detail($url){
         //get article by url
         $article = $this->model->where('url', $url)->first();
-        if($article!=null){
-            //set
-        }else{
-            //article not found
-        }
 
         //set to global var
         $this->data['article'] = $article;

@@ -94,9 +94,6 @@
                                     <span>Contact</span>
                                 </router-link>
                             </li>                      
-                            <li class="header-menu">
-                                <span>Settings</span>
-                            </li>
                         </ul>
                     </div>
                     <!-- sidebar-menu  -->
@@ -109,10 +106,10 @@
                         <i class="fa fa-bell"></i>
                         <span v-if="this.$store.getters.getTotalNotifications > 0" class="badge badge-pill badge-warning notification">{{ this.$store.getters.getTotalNotifications }}</span>
                     </router-link>
-                    <a>
+                    <!-- <a>
                         <i class="fa fa-envelope"></i>
-                        <!-- <span class="badge badge-pill badge-success notification">7</span> -->
-                    </a>
+                        <span class="badge badge-pill badge-success notification">7</span>
+                    </a> -->
                     <router-link to="/cms/update-profile">
                         <i class="fa fa-cog"></i>
                         <!-- <span class="badge-sonar"></span> -->
