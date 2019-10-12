@@ -22,5 +22,6 @@
         <!-- Javascript -->
         <script type="text/javascript" src="{{ asset('js/jquery.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('libs/bootstrap/js/bootstrap.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('js/main.js') }}"></script>
     </body>
 </html>

@@ -1,3 +1,5 @@
+
+
 <template>
     <div id="app">
         <router-view></router-view>
@@ -31,11 +33,14 @@ export default {
                         document.getElementById("expiredModalButton").click();
                     }
                 }
+
+                //user is valid
+                //check for notification every minute
+                setInterval(() => {
+                    this.$store.dispatch('getNotifications');
+                }, 1 * 60 * 1000);
             }
         });
-
-        //get total notification
-        this.$store.dispatch('getNotifications');
     }
 }
 </script>

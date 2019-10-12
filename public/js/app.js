@@ -1742,6 +1742,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 //componenets
 
 
@@ -1751,6 +1753,8 @@ __webpack_require__.r(__webpack_exports__);
     LogoutModal: _LogoutModal_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   mounted: function mounted() {
+    var _this = this;
+
     this.$store.dispatch('getUser', {
       callback: function callback(res) {
         //check response
@@ -1760,11 +1764,15 @@ __webpack_require__.r(__webpack_exports__);
             //show expired modal
             document.getElementById("expiredModalButton").click();
           }
-        }
-      }
-    }); //get total notification
+        } //user is valid
+        //check for notification every minute
 
-    this.$store.dispatch('getNotifications');
+
+        setInterval(function () {
+          _this.$store.dispatch('getNotifications');
+        }, 1 * 60 * 1000);
+      }
+    });
   }
 });
 
@@ -2357,6 +2365,8 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_userHelper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../../helpers/userHelper */ "./resources/js/helpers/userHelper.js");
+/* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! timers */ "./node_modules/timers-browserify/main.js");
+/* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(timers__WEBPACK_IMPORTED_MODULE_1__);
 //
 //
 //
@@ -2494,6 +2504,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //libs
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2524,45 +2535,6 @@ __webpack_require__.r(__webpack_exports__);
         $(".page-wrapper").addClass("toggled");
       });
     });
-  },
-  methods: {
-    getTotalUnreadNotifications: function getTotalUnreadNotifications() {
-      var _this = this;
-
-      //set loading
-      this.total_notification_loading = true; //get total notification
-
-      this.$store.dispatch('getTotalNotiications');
-      axios.get('/api/admin/notifications/total', {
-        headers: _helpers_userHelper__WEBPACK_IMPORTED_MODULE_0__["default"].authenticationBearer().headers
-      }).then(function (res) {
-        //check response
-        if (res.status === 200) {
-          if (config.is_debug) {
-            console.log(res);
-          } //check if res is valid
-
-
-          if (typeof res.data.status !== 'undefined') {
-            //there is an error, show error
-            _this.total_notification_error = res.data.status;
-          } else {
-            //all is ok
-            _this.total_notification = res.data.total;
-          }
-        } else {
-          //error response
-          _this.total_notification_error = res.status + ": " + res.statusText;
-        } //hide loading
-
-
-        _this.total_notification_loading = false;
-      })["catch"](function (err) {
-        //error
-        //hide loading
-        _this.total_notification_loading = false;
-      });
-    }
   }
 });
 

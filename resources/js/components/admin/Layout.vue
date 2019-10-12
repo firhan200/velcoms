@@ -136,6 +136,7 @@
 <script>
 //libs
 import userHelper from './../../helpers/userHelper';
+import { setInterval } from 'timers';
 
 export default {
     data(){
@@ -167,48 +168,6 @@ export default {
                 $(".page-wrapper").addClass("toggled");
             });
         });
-    },
-
-    methods : {
-        getTotalUnreadNotifications(){
-            //set loading
-            this.total_notification_loading = true;
-
-            //get total notification
-            this.$store.dispatch('getTotalNotiications')
-            axios.get('/api/admin/notifications/total',{
-                headers: userHelper.authenticationBearer().headers
-            })
-            .then(res => {
-                //check response
-                if(res.status===200){
-                    if(config.is_debug){
-                        console.log(res);
-                    }
-
-                    //check if res is valid
-                    if(typeof res.data.status!=='undefined'){
-                        //there is an error, show error
-                        this.total_notification_error = res.data.status;
-                    }else{
-                        //all is ok
-                        this.total_notification = res.data.total;
-                    }
-                }
-                else{
-                    //error response
-                    this.total_notification_error = res.status+": "+res.statusText;
-                }
-
-                //hide loading
-                this.total_notification_loading = false;
-            })
-            .catch(err => {
-                //error
-                //hide loading
-                this.total_notification_loading = false
-            });
-        }
     }
 }
 </script>

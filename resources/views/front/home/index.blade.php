@@ -46,17 +46,17 @@
                             <div class="col-md-6 offset-md-3">
                                 <div class="form-group">
                                     <label>Name</label>
-                                    <input type="text" class="form-control" placeholder="input your name..."/>
+                                    <input type="text" id="name" class="form-control" placeholder="input your name..." required/>
                                 </div>
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input type="email" class="form-control" placeholder="input your email..."/>
+                                    <input type="email" id="email" class="form-control" placeholder="input your email..." required/>
                                 </div>
                                 <div class="form-group">
                                     <label>Message</label>
-                                    <textarea class="form-control" placeholder="input your message..."></textarea>
+                                    <textarea class="form-control" id="comments" placeholder="input your message..." required></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="submit" id="submit" class="btn btn-primary">Submit</button>
                             </div>
                         </div>         
                     </div>
