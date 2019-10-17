@@ -137,7 +137,7 @@ class ArticleController extends BaseController
                 $model->title = $request->input('title');
                 $model->slug = $request->input('slug');
                 $model->body = $request->input('body');
-                $model->url = urlencode($request->input('title'));
+                $model->url = base64_encode($request->input('title'));
                 $model->article_category_id = $request->input('article_category_id');
                 $model->is_active = 1; //default is active
                 $model->is_deleted = 0; //default
@@ -222,7 +222,7 @@ class ArticleController extends BaseController
                     $modelObj->title = $request->title;
                     $modelObj->slug = $request->slug;
                     $modelObj->body = $request->body;
-                    $modelObj->url = urlencode($request->title);
+                    $modelObj->url = base64_encode($request->title);
                     $modelObj->article_category_id = $request->article_category_id;
                     $modelObj->is_active = $request->is_active;
 
